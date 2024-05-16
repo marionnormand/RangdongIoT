@@ -1,0 +1,3 @@
+git branch => voir les branches
+git checkout -b YounesBranch => changer de branche, ici passe à la branche teh youyou
+pour push faut git push origin YounesBranch
