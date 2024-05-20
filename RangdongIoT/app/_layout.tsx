@@ -34,12 +34,12 @@ const RootLayout = () => {
   }
 
   return (
-      <NavigationContainer>
+      //<NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="homePage" component={HomePage} />
           <Stack.Screen name="editPage" component={EditPage} />
         </Stack.Navigator>
-      </NavigationContainer>
+      //</NavigationContainer>
   );
 };
 
