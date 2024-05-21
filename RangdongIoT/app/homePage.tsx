@@ -64,9 +64,8 @@ const HomePage = ({navigation}: any) => {
               name : {item.name}
               mac : {item.mac}
               status : {item.status.toString()}
-              
+              id : {item.id}
             </ThemedText>
-            
         ))}
       </View>
     </View>
@@ -80,7 +79,7 @@ function handleDeleteRequest() {
     fetch(apiUrl, {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': content_type
         }
     })
     .then(response => {
@@ -95,20 +94,19 @@ function handleDeleteRequest() {
 }
 
 async function handlePutRequest() {
-  const url = 'https://digitaldev.io.vn/todos/2';
-  const requestData = {
-      name: "okok",
-      mac: "4453.4234",
+  const data = {
+      name: "marion",
+      mac: "121121",
       status: true
   };
 
   try {
-      const response = await fetch(url, {
+      const response = await fetch(apiUrl, {
           method: 'PUT',
           headers: {
               'Content-Type': 'application/json'
           },
-          body: JSON.stringify(requestData)
+          body: JSON.stringify(data)
       });
 
       if (!response.ok) {
@@ -118,7 +116,7 @@ async function handlePutRequest() {
       const responseData = await response.json();
       console.log('Response:', responseData);
   } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:',error);
   }
 }
 
