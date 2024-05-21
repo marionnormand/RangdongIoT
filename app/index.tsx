@@ -4,10 +4,15 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import CustomAlertBox from "@/components/CustomAlertBox";
 
-const HomeScreen = ({navigation} : any) => {
-  const rectangles = Array.from({ length: 20 }, (_, index) => ({ id: index, text: `Rectangle ${index + 1}` }));
+const HomeScreen = ({ navigation }: any) => {
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [selectedRectangleId, setSelectedRectangleId] = useState<number | null>(null);
+
+  const [fetchedData, setFetchedData] = useState<any[]>([
+    { name: 'CB Do am dat', mac: 'f5412a29-c6d2-4fb7-88d8-546df86d33a2' },
+    { name: 'Bauchy', mac: 'f5412a29-c6d2-4fb7-88d8-546df86d33a3' },
+    //simul
+  ]);
 
   const GoEdit = () => {
     navigation.navigate('edit');
@@ -39,11 +44,11 @@ const HomeScreen = ({navigation} : any) => {
         <ThemedText type="title" style={styles.centeredText}>RangdongIoT</ThemedText>
       </ThemedView>
       <Image
-        source={require('@/assets/images/flag_vietnam.png')} 
+        source={require('@/assets/images/flag_vietnam.png')}
         style={styles.flag_viet}
       />
       <Image
-        source={require('@/assets/images/rang-dong-icon.png')} 
+        source={require('@/assets/images/rang-dong-icon.png')}
         style={styles.rang}
       />
       <ThemedView style={styles.stepContainer}>
@@ -54,14 +59,24 @@ const HomeScreen = ({navigation} : any) => {
           <ThemedText style={styles.buttonText}>New</ThemedText>
         </TouchableOpacity>
         <ScrollView>
-          {rectangles.map(rectangle => (
-            <TouchableOpacity 
-              key={rectangle.id} 
-              style={styles.rectangle} 
-              onPress={() => handleOptionsPress(rectangle.id+1)}>
-              <ThemedText style={styles.rectangleText}>{rectangle.text}</ThemedText>
+          {fetchedData.map(item => (
+            <TouchableOpacity
+              key={item.name}
+              style={styles.rectangle}
+              onPress={() => handleOptionsPress(item.mac + 1)}>
+              <View style={{ alignItems: 'flex-start', right: 30 }}>
+                <ThemedText style={styles.rectangleText}>
+                  <ThemedText style={styles.rectangleTextBold}>name : </ThemedText>
+                  {item.name}
+                </ThemedText>
+                <ThemedText style={styles.rectangleText}>
+                  <ThemedText style={styles.rectangleTextBold}>mac : </ThemedText>
+                  {item.mac}
+                </ThemedText>
+              </View>
+
               <View style={styles.optionsContainer}>
-                <TouchableOpacity onPress={() => handleOptionsPress(rectangle.id+1)}>
+                <TouchableOpacity onPress={() => handleOptionsPress(item.mac + 1)}>
                   <View style={styles.optionDot} />
                   <View style={styles.optionDot} />
                   <View style={styles.optionDot} />
@@ -73,22 +88,22 @@ const HomeScreen = ({navigation} : any) => {
       </ThemedView>
 
       {showAlert && (
-      <CustomAlertBox
-        visible={showAlert}
-        message={
-          <Text>
-            Do you want to have new data ?
-          </Text>
-        }
-        onCancel={unShowBox}
-        onConfirm={GoEdit}
-        confirmButtonText={selectedRectangleId !== null ? 'Edit' : 'New'}
-        cancelButtonText='Cancel'
-        showCancelButton= {true}
-      />)}
+        <CustomAlertBox
+          visible={showAlert}
+          message={
+            <Text>
+              Do you want to have new data ?
+            </Text>
+          }
+          onCancel={unShowBox}
+          onConfirm={GoEdit}
+          confirmButtonText={selectedRectangleId !== null ? 'Edit' : 'New'}
+          cancelButtonText='Cancel'
+          showCancelButton={true}
+        />)}
 
     </View>
-    
+
   );
 }
 
@@ -100,12 +115,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center', // Aligne le texte
     gap: 8,
+    backgroundColor: '#FFF',
   },
   stepContainer: {
     gap: 10,
     marginBottom: 8,
     alignItems: 'center',
     justifyContent: 'center', // Aligne le texte
+    backgroundColor: '#FFF',
   },
   container: {
     flex: 1,
@@ -160,13 +177,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#BE9F9F70', // Couleur de fond du rectangle
     justifyContent: 'center',
     alignItems: 'center',
+    textAlign: 'left',
     marginVertical: 5, // Marge horizontale entre les rectangles
     borderRadius: 10, // Arrondi des coins du rectangle
   },
   rectangleText: {
     color: '#000000', // Couleur du texte du rectangle
-    fontSize: 16, // Taille de police du texte du rectangle
-    fontWeight: 'bold', // Gras du texte du rectangle
+    fontSize: 12, // Taille de police du texte du rectangle
+    textAlign: 'left',
+    alignItems: 'flex-start'
+  },
+  rectangleTextBold: {
+    color: '#000000', // Couleur du texte du rectangle
+    fontSize: 12, // Taille de police du texte du rectangle
+    fontWeight: 'bold',
   },
   scrollContainer: {
     gap: 10,
@@ -174,8 +198,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center', // Aligne le texte
     paddingTop: 60,
+    backgroundColor: '#FFF',
   },
-
   optionsContainer: {
     position: 'absolute',
     top: 5,

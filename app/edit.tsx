@@ -33,6 +33,7 @@ const EditScreen = ({navigation} : any) => {
   };
 
   const BackHome = () => {
+    setShowAlert(false);
     navigation.navigate('index');
   };
 
@@ -118,12 +119,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center', // Aligne le texte
     gap: 8,
+    backgroundColor: '#FFF',
   },
   stepContainer: {
     gap: 10,
     marginBottom: 8,
     alignItems: 'center',
     justifyContent: 'center', // Aligne le texte
+    backgroundColor: '#FFF',
   },
   container: {
     flex: 1,
