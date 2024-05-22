@@ -1,40 +1,15 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
- 
-const url = 'https://digitaldev.io.vn/todos';
-const data = {
-    name: 'LAMPE4567',
-    mac: '22228',
-    status: false
-};
-const content_type = 'application/json';
+
+import { handleDeleteRequest } from './network/delete'
+import { handlePostRequest } from './network/post'
+import { handlePutRequest } from './network/put'
+import { handleGetRequest } from './network/get'
+
 
 const HomePage = ({navigation}: any) => {
-
   const [fetchedData, setFetchedData] = useState<any[]>([]);
-
-  const handleGetRequest = () => {
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': content_type
-      }
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('La réponse du réseau n\'est pas valide ' + response.statusText);
-      }
-      return response.json();
-    })
-    .then(data_get => {
-      setFetchedData(data_get);
-    })
-    .catch(error => {
-      console.error('Il y a eu un problème avec l\'opération fetch :', error);
-    });
-  }
-
 
   return (
     <View style={styles.container}>
@@ -47,7 +22,7 @@ const HomePage = ({navigation}: any) => {
         >
           <Text style={styles.buttonText}>Go to Edit Page</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleGetRequest}>
+        <TouchableOpacity style={styles.button} onPress={() => handleGetRequest(setFetchedData)}>
           <Text style={styles.buttonText}>FETCH GET</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handlePutRequest}>
@@ -59,91 +34,23 @@ const HomePage = ({navigation}: any) => {
         <TouchableOpacity style={styles.button} onPress={handlePostRequest}>
           <Text style={styles.buttonText}>FETCH POST (CREATE)</Text>
         </TouchableOpacity>
-        {fetchedData.map((item, index) => (
-            <ThemedText key={index} type="subtitle" style={styles.orangeText} >
+        {fetchedData && fetchedData.length > 0 ? (
+          fetchedData.map((item, index) => (
+            <ThemedText key={index} type="subtitle" style={styles.orangeText}>
               name : {item.name}
               mac : {item.mac}
               status : {item.status.toString()}
               id : {item.id}
             </ThemedText>
-        ))}
+          ))
+        ) : (
+          <Text style={styles.buttonText}>for seeing datas, click on 'FETCH GET'</Text>
+        )}
       </View>
     </View>
   );
 }
 
-const todoId = '11'; 
-const apiUrl = 'https://digitaldev.io.vn/todos/' + todoId;
-
-function handleDeleteRequest() {
-    fetch(apiUrl, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': content_type
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        console.log('Todo deleted successfully');
-    })
-    .catch(error => {
-        console.error('There was a problem deleting the todo:', error);
-    });
-}
-
-
-async function handlePutRequest() {
-  const data_put = {
-      name: 'marion',
-      mac: '121212',
-      status: true 
-  };
-
-  try {
-      const response = await fetch(apiUrl, {
-          method: 'PUT',
-          headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data_put)
-      });
-
-      if (!response.ok) {
-          throw new Error('HTTP error! status: ${response.status}');
-      }
-
-      const responseData = await response.json();
-      console.log('Response:', responseData);
-  } catch (error) {
-      console.error('Error:', error);
-  }
-}
-
-
-function handlePostRequest(){
-  fetch(url, {
-      method: 'POST',
-      headers: {
-          'Content-Type': content_type
-      },
-      body: JSON.stringify(data)
-  })
-  .then(response => {
-      if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.statusText);
-      }
-      return response.json();
-  })
-  .then(data => {
-      console.log('Success:', data);
-  })
-  .catch(error => {
-      console.error('There was a problem with the fetch operation:', error);
-  });
-}
 
 export default HomePage;
 
