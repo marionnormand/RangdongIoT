@@ -8,6 +8,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import CustomAlertBox from "@/components/CustomAlertBox";
 import { LogBox } from 'react-native';
+import { handlePostRequest, DataToSend } from './http_handlers'; 
+
 
 // Ignore les avertissements spécifiques ===> gerer ca
 LogBox.ignoreLogs([
@@ -17,6 +19,17 @@ LogBox.ignoreLogs([
 
 const EditScreen = ({navigation} : any) => {
 
+  const [name, setName] = useState('');
+  const [mac, setMac] = useState('');
+  const [isSend, setIsSend] = useState(false);
+  
+  const newData: DataToSend = {
+    name: name,
+    mac: mac,
+    status: false,
+    id : 11
+  };
+
   const [toggleValue, setToggleValue] = useState(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
 
@@ -25,11 +38,17 @@ const EditScreen = ({navigation} : any) => {
     setShowAlert(false);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log(`Save pressed`);
-    setShowAlert(true); // Afficher l'alerte
-
-    /* Effectuer des actions */
+    try {
+      await handlePostRequest(newData);
+      setIsSend(true);
+      setShowAlert(true); // Afficher l'alerte
+    } catch (error) {
+      console.error('Error while saving:', error);
+      setIsSend(false);
+      setShowAlert(true);
+    }
   };
 
   const BackHome = () => {
@@ -56,11 +75,21 @@ const EditScreen = ({navigation} : any) => {
       <View style={styles.inputContainer}>
         <View style={styles.inputRow}>
           <Text style={styles.label}>Name :</Text>
-          <TextInput style={styles.input} placeholder="New name..." />
+          <TextInput
+            style={styles.input}
+            placeholder="New name..."
+            value={name}
+            onChangeText={text => setName(text)}
+          />
         </View>
         <View style={styles.inputRow}>
           <Text style={styles.label}>MAC :</Text>
-          <TextInput style={styles.input} placeholder="New MAC..." />
+          <TextInput
+            style={styles.input}
+            placeholder="New MAC..."
+            value={mac}
+            onChangeText={text => setMac(text)}
+          />
         </View>
       </View>
       <View style={styles.toggle}>
@@ -100,7 +129,7 @@ const EditScreen = ({navigation} : any) => {
         visible={showAlert}
         message={
           <Text>
-            Changes applied successfully.
+            {isSend === true ? "Changes applied successfully." : "Unable to apply changes."}
           </Text>
         }
         onCancel={handleCancel}

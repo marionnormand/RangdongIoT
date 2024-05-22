@@ -3,14 +3,17 @@ import React, { useState } from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import CustomAlertBox from "@/components/CustomAlertBox";
+import { handleGetRequest , handleDeleteRequest} from './http_handlers'; 
+import { useFocusEffect } from '@react-navigation/native';
+
 
 const HomeScreen = ({ navigation }: any) => {
   const [showAlert, setShowAlert] = useState<boolean>(false);
-  const [selectedRectangleId, setSelectedRectangleId] = useState<number | null>(null);
+  const [selectedRectangle, setSelectedRectangle] = useState<number | null>(null);
 
   const [fetchedData, setFetchedData] = useState<any[]>([
-    { name: 'CB Do am dat', mac: 'f5412a29-c6d2-4fb7-88d8-546df86d33a2' },
-    { name: 'Bauchy', mac: 'f5412a29-c6d2-4fb7-88d8-546df86d33a3' },
+    { name: 'CB Do am dat', mac: 'f5412a29-c6d2-4fb7-88d8-546df86d33a2', id : 0 },
+    { name: 'Bauchy', mac: 'f5412a29-c6d2-4fb7-88d8-546df86d33a3', id : 1 },
     //simul
   ]);
 
@@ -18,25 +21,60 @@ const HomeScreen = ({ navigation }: any) => {
     navigation.navigate('edit');
     setShowAlert(false);
   };
-
-  const unShowBox = () => {
-    console.log(`Cancel pressed`); //debug
-    setShowAlert(false);
+  
+  const unShowBox = async () => {
+    if (selectedRectangle !== null && selectedRectangle >= 0 && selectedRectangle < fetchedData.length) {
+      console.log(`Delete pressed`);
+      const rectangleToDelete = fetchedData[selectedRectangle].id;
+      //const { name, mac } = rectangleToDelete;
+      try {
+        await handleDeleteRequest(rectangleToDelete);
+        setShowAlert(false); // Masquer l'alerte après la suppression
+        //console.log(`Element ${name} (${mac}) deleted`);
+        getUpdate();
+        console.log(`MAJ des données`);
+      } catch (error) {
+        console.error('Error while deleting:', error);
+        // Gérer l'erreur ici
+        //console.log(`Unable to delete element ${name} (${mac})`);
+      }
+    } else {
+      console.log(`Delete annulé`);
+      setShowAlert(false);
+    }
   };
 
   const handleOptionsPress = (rectangleId: number) => {
-    // Afficher une alerte avec les options "Edit" et "Cancel"
-    console.log(`Cancel pressed`);
-    setSelectedRectangleId(rectangleId);
+    // Afficher une alerte avec les options "Edit" et "Delete"
+    console.log(`Rectangle pressed`);
+    setSelectedRectangle(rectangleId);
     setShowAlert(true);
   };
 
   const handleNewPress = () => {
     console.log(`New pressed`);
-    setSelectedRectangleId(null);
+    setSelectedRectangle(null);
     // Afficher une alerte avec les options "New" et "Cancel"
     setShowAlert(true);
   };
+
+  const getUpdate = async () => {
+    try {
+      const data = await handleGetRequest();
+      setFetchedData(data);
+    } catch (error) {
+      // Gérez les erreurs ici
+      console.error('Erreur lors de la récupération des données :', error);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getUpdate();
+      console.log(`MAJ des données`);
+    }, [])
+  );
+
 
   return (
     <View style={styles.container}>
@@ -59,11 +97,11 @@ const HomeScreen = ({ navigation }: any) => {
           <ThemedText style={styles.buttonText}>New</ThemedText>
         </TouchableOpacity>
         <ScrollView>
-          {fetchedData.map(item => (
+          {fetchedData.map((item,index) => (
             <TouchableOpacity
               key={item.name}
               style={styles.rectangle}
-              onPress={() => handleOptionsPress(item.mac + 1)}>
+              onPress={() => handleOptionsPress(index)}>
               <View style={{ alignItems: 'flex-start', right: 30 }}>
                 <ThemedText style={styles.rectangleText}>
                   <ThemedText style={styles.rectangleTextBold}>name : </ThemedText>
@@ -76,7 +114,7 @@ const HomeScreen = ({ navigation }: any) => {
               </View>
 
               <View style={styles.optionsContainer}>
-                <TouchableOpacity onPress={() => handleOptionsPress(item.mac + 1)}>
+                <TouchableOpacity onPress={() => handleOptionsPress(index)}>
                   <View style={styles.optionDot} />
                   <View style={styles.optionDot} />
                   <View style={styles.optionDot} />
@@ -97,8 +135,8 @@ const HomeScreen = ({ navigation }: any) => {
           }
           onCancel={unShowBox}
           onConfirm={GoEdit}
-          confirmButtonText={selectedRectangleId !== null ? 'Edit' : 'New'}
-          cancelButtonText='Cancel'
+          confirmButtonText={selectedRectangle !== null ? 'Edit' : 'New'}
+          cancelButtonText={selectedRectangle !== null ? 'Delete' : 'Cancel'}
           showCancelButton={true}
         />)}
 
@@ -185,6 +223,7 @@ const styles = StyleSheet.create({
     color: '#000000', // Couleur du texte du rectangle
     fontSize: 12, // Taille de police du texte du rectangle
     textAlign: 'left',
+    right: 100,
     alignItems: 'flex-start'
   },
   rectangleTextBold: {
