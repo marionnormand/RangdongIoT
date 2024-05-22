@@ -72,8 +72,8 @@ const HomePage = ({navigation}: any) => {
   );
 }
 
-const todoId = '3'; 
-const apiUrl = 'http://digitaldev.io.vn/todos/' + todoId;
+const todoId = '11'; 
+const apiUrl = 'https://digitaldev.io.vn/todos/' + todoId;
 
 function handleDeleteRequest() {
     fetch(apiUrl, {
@@ -93,20 +93,22 @@ function handleDeleteRequest() {
     });
 }
 
+
 async function handlePutRequest() {
-  const data = {
-      name: "marion",
-      mac: "121121",
-      status: true
+  const data_put = {
+      name: 'marion',
+      mac: '121212',
+      status: true 
   };
 
   try {
       const response = await fetch(apiUrl, {
           method: 'PUT',
           headers: {
+              'Accept': 'application/json',
               'Content-Type': 'application/json'
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data_put)
       });
 
       if (!response.ok) {
@@ -116,11 +118,12 @@ async function handlePutRequest() {
       const responseData = await response.json();
       console.log('Response:', responseData);
   } catch (error) {
-      console.error('Error:',error);
+      console.error('Error:', error);
   }
 }
 
-  function handlePostRequest(){
+
+function handlePostRequest(){
   fetch(url, {
       method: 'POST',
       headers: {
@@ -140,7 +143,7 @@ async function handlePutRequest() {
   .catch(error => {
       console.error('There was a problem with the fetch operation:', error);
   });
-  }
+}
 
 export default HomePage;
 
