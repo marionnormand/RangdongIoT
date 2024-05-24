@@ -64,7 +64,7 @@ const EditPage = ({ navigation }: any) => {
   };
 
   const handleToggleChange = (val: any) => {
-    setToggleValue(val); // Utilisez la nouvelle valeur du switch
+    setToggleValue(val); 
   };
 
   return (

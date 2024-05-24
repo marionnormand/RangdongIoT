@@ -8,7 +8,7 @@ export const handlePutRequest = async (name: string, mac: string, status: boolea
       status: status 
   };
 
-  const apiUrl = 'https://digitaldev.io.vn/todos/Testdb_Todo/dbmarion' + id; 
+  const apiUrl = 'https://digitaldev.io.vn/todos/Testdb_Todo/dbmarion/' + id; 
 
 
   try {
@@ -22,7 +22,7 @@ export const handlePutRequest = async (name: string, mac: string, status: boolea
       });
 
       if (!response.ok) {
-          throw new Error('HTTP error! status: ${response.status}');
+          throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const responseData = await response.json();
