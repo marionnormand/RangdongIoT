@@ -1,13 +1,9 @@
-const url = 'https://digitaldev.io.vn/todos';
-const data = {
-    name: 'LAMPE4567',
-    mac: '22228',
-    status: false
-};
+import { DataToSend } from './DataToSend'
+
+const url = 'https://digitaldev.io.vn/todos/Testdb_Todo/dbmarion';
 const content_type = 'application/json';
 
-
-export const handlePostRequest = () => {
+export const handlePostRequest = (data:DataToSend) => {
     fetch(url, {
         method: 'POST',
         headers: {

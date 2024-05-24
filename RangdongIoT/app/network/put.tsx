@@ -1,13 +1,15 @@
-const todoId = '11'; 
-const apiUrl = 'https://digitaldev.io.vn/todos/' + todoId;
+
 const content_type = 'application/json';
 
-export const handlePutRequest = async () => {
+export const handlePutRequest = async (name: string, mac: string, status: boolean, id:number) => {
   const data_put = {
-      name: 'marion',
-      mac: '121212',
-      status: true 
+      name: name,
+      mac: mac,
+      status: status 
   };
+
+  const apiUrl = 'https://digitaldev.io.vn/todos/Testdb_Todo/dbmarion' + id; 
+
 
   try {
       const response = await fetch(apiUrl, {

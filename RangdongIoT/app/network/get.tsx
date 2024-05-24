@@ -1,4 +1,4 @@
-const url = 'https://digitaldev.io.vn/todos';
+const url = 'https://digitaldev.io.vn/todos/Testdb_Todo/dbmarion';
 const data = {
     name: 'LAMPE4567',
     mac: '22228',

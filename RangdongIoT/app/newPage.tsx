@@ -1,40 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Image, TextInput, LogBox } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import CustomAlertBoxNew from "@/components/CustomAlertBoxNew";
 import { Switch } from 'react-native-switch';
-import { useRoute } from '@react-navigation/native';
-import { RouteProp } from '@react-navigation/native';
 
-
-import { handlePutRequest } from './network/put'
+import { handlePostRequest } from './network/post'
 import { DataToSend } from './network/DataToSend'
-import { RootStackParamList } from './_layout';
 
 
-const EditPage = ({ navigation }: any) => {
-  const route = useRoute<RouteProp<RootStackParamList, 'editPage'>>();
-  const routeParams = route.params || {};
-  const { rectangle } = routeParams;
+const NewPage = ({navigation}: any) => {
+
+  const [fetchedData, setFetchedData] = useState<any[]>([]);
   const [name, setName] = useState('');
   const [mac, setMac] = useState('');
-  const [toggleValue, setToggleValue] = useState(false);
-  const [id, setId] = useState(0);
   const [isSend, setIsSend] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
+  const [toggleValue, setToggleValue] = useState(false);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (rectangle && Object.keys(rectangle).length > 0) {
-      setName(rectangle.name || '');
-      setMac(rectangle.mac || '');
-      setToggleValue(!!rectangle.status); // converti en boolean 
-      setId(rectangle.id || 0); // converti en boolean 
-    }
-  }, [rectangle]);
-
-  const newData = {
+  const newData: DataToSend = {
     name: name,
     mac: mac,
     status: toggleValue,
@@ -48,9 +33,9 @@ const EditPage = ({ navigation }: any) => {
   const handleSave = async () => {
     console.log(`Save pressed`);
     try {
-      await handlePutRequest(name, mac, toggleValue, id);
+      await handlePostRequest(newData);
       setIsSend(true);
-      setShowAlert(true);
+      setShowAlert(true); // Afficher l'alerte
     } catch (error) {
       console.error('Error while saving:', error);
       setIsSend(false);
@@ -61,10 +46,6 @@ const EditPage = ({ navigation }: any) => {
   const BackHome = () => {
     setShowAlert(false);
     navigation.navigate('homePage');
-  };
-
-  const handleToggleChange = (val: any) => {
-    setToggleValue(val); // Utilisez la nouvelle valeur du switch
   };
 
   return (
@@ -81,14 +62,14 @@ const EditPage = ({ navigation }: any) => {
         style={styles.rang}
       />
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle" style={styles.centeredTextSub}>Edit database</ThemedText>
+        <ThemedText type="subtitle" style={styles.centeredTextSub}>New database</ThemedText>
       </ThemedView>
       <View style={styles.inputContainer}>
         <View style={styles.inputRow}>
           <Text style={styles.label}>Name :</Text>
           <TextInput
             style={styles.input}
-            placeholder="Name"
+            placeholder="New name..."
             placeholderTextColor="#828282"
             value={name}
             onChangeText={text => setName(text)}
@@ -98,7 +79,7 @@ const EditPage = ({ navigation }: any) => {
           <Text style={styles.label}>MAC :</Text>
           <TextInput
             style={styles.input}
-            placeholder="MAC Address"
+            placeholder="New mac..."
             placeholderTextColor="#828282"
             value={mac}
             onChangeText={text => setMac(text)}
@@ -107,30 +88,31 @@ const EditPage = ({ navigation }: any) => {
         <View style={styles.inputRow}>
           <Text style={styles.label}>Status :</Text>
           <View style={styles.toggleContainer}>
-            <Switch
-              value={toggleValue}
-              onValueChange={handleToggleChange}
-              disabled={false}
-              activeText={'ON'}
-              inActiveText={'OFF'}
-              circleSize={50}
-              barHeight={50}
-              circleBorderWidth={0}
-              backgroundActive={'#D9D9D9'}
-              backgroundInactive={'#D9D9D9'}
-              circleActiveColor={'#5D9432'}
-              circleInActiveColor={'#943832'}
-              renderInsideCircle={() => <Text style={styles.activeText}>{toggleValue ? 'ON' : 'OFF'}</Text>}
-              renderActiveText={false}
-              renderInActiveText={false}
-              switchLeftPx={1.6}
-              switchRightPx={1.6}
-              switchWidthMultiplier={2}
-              switchBorderRadius={25}
-            />
+          <Switch
+            value={toggleValue}
+            onValueChange={val => setToggleValue(val)}
+            disabled={false}
+            activeText={'ON'}
+            inActiveText={'OFF'}
+            circleSize={50}
+            barHeight={50} // Hauteur de la barre (ovale horizontal)
+            circleBorderWidth={0}
+            backgroundActive={'#D9D9D9'}
+            backgroundInactive={'#D9D9D9'}
+            circleActiveColor={'#5D9432'}
+            circleInActiveColor={'#943832'}
+            renderInsideCircle={() => <Text style={styles.activeText}>{toggleValue ? 'ON' : 'OFF'}</Text>}
+            renderActiveText={false}
+            renderInActiveText={false}
+            switchLeftPx={1.6} // Déplace le cercle de moitié de sa taille vers la gauche
+            switchRightPx={1.6} // Déplace le cercle de moitié de sa taille vers la droite
+            switchWidthMultiplier={2} // Double la largeur de la barre
+            switchBorderRadius={25} // Rayon de l'ovale
+          />
           </View>
         </View>
       </View>
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={BackHome}>
           <ThemedText style={styles.buttonText}>Cancel</ThemedText>
@@ -143,7 +125,7 @@ const EditPage = ({ navigation }: any) => {
         visible={showAlert}
         message={
           <Text>
-            {isSend ? "Changes applied successfully." : "Unable to apply changes."}
+            {isSend === true ? "Changes applied successfully." : "Unable to apply changes."}
           </Text>
         }
         onCancel={handleCancel}
@@ -155,7 +137,7 @@ const EditPage = ({ navigation }: any) => {
 }
 
 
-export default EditPage;
+export default NewPage;
 
 const styles = StyleSheet.create({
   activeText: {

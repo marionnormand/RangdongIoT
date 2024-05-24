@@ -1,5 +1,5 @@
-const todoId = '11'; 
-const apiUrl = 'https://digitaldev.io.vn/todos/' + todoId;
+const todoId = '0'; 
+const apiUrl = 'https://digitaldev.io.vn/todos/Testdb_Todo/dbmarion' + todoId;
 const content_type = 'application/json';
 
 export const handleDeleteRequest = () => {
