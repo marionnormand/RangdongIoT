@@ -10,6 +10,7 @@ import { handleGetRequest } from './network/get';
 
 
 const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
 
 const HomePage = ({ navigation }: any) => {
   const [showAlertNew, setShowAlertNew] = useState<boolean>(false);
@@ -282,7 +283,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   scrollView: {
-    maxHeight: windowHeight - 400,
+    maxHeight: windowHeight - 350,
+    maxWidth: windowWidth - 50
   },
   scrollContainer: {
     gap: 10,
@@ -316,7 +318,7 @@ const styles = StyleSheet.create({
   },
   touchable: {
     position: 'absolute',
-    right: 7,
+    right: 16,
     top: '10%',
   },
 });
