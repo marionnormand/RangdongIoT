@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -15,7 +15,6 @@ const HomePage = ({ navigation }: any) => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [idData, setId] = useState<number>(0);
   const [fetchedData, setFetchedData] = useState<any[]>([]);
-  const [toggleValue, setToggleValue] = useState<boolean>(false);
 
   const GoEdit = () => {
     navigation.navigate('editPage', { rectangle: selectedRectangle });
@@ -65,6 +64,15 @@ const HomePage = ({ navigation }: any) => {
     }, [])
   );
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      getUpdate();
+    }, 5000);
+  
+    return () => clearInterval(intervalId); // Nettoyer l'intervalle lors du démontage du composant
+  }, []); // Le tableau vide en second argument indique que cet effet ne dépend d'aucune variable, donc il ne s'exécute qu'une seule fois après le montage initial du composant
+  
+  
   const handleOptionPressRond = (index: number, item: any, id:number) => {
     setSelectedRectangle(item); // Mettre à jour l'état selectedRectangle
     setId(id); // Mettre à jour l'ID sélectionné
