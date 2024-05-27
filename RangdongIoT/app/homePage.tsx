@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import CustomAlertBoxNew from "@/components/CustomAlertBoxNew";
@@ -7,6 +7,9 @@ import CustomAlertBoxEdit from "@/components/CustomAlertBoxEdit";
 import { useFocusEffect } from '@react-navigation/native';
 import { handleDeleteRequest } from './network/delete';
 import { handleGetRequest } from './network/get';
+
+
+const windowHeight = Dimensions.get('window').height;
 
 const HomePage = ({ navigation }: any) => {
   const [showAlertNew, setShowAlertNew] = useState<boolean>(false);
@@ -64,6 +67,7 @@ const HomePage = ({ navigation }: any) => {
     }, [])
   );
 
+  
   useEffect(() => {
     const intervalId = setInterval(() => {
       getUpdate();
@@ -72,7 +76,7 @@ const HomePage = ({ navigation }: any) => {
     return () => clearInterval(intervalId); // Nettoyer l'intervalle lors du démontage du composant
   }, []); // Le tableau vide en second argument indique que cet effet ne dépend d'aucune variable, donc il ne s'exécute qu'une seule fois après le montage initial du composant
   
-  
+
   const handleOptionPressRond = (index: number, item: any, id:number) => {
     setSelectedRectangle(item); // Mettre à jour l'état selectedRectangle
     setId(id); // Mettre à jour l'ID sélectionné
@@ -278,7 +282,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   scrollView: {
-    maxHeight: 520,
+    maxHeight: windowHeight - 400,
   },
   scrollContainer: {
     gap: 10,
