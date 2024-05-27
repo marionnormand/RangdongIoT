@@ -66,25 +66,24 @@ const HomePage = ({ navigation }: any) => {
   );
 
   const handleOptionPressRond = (index: number, item: any, id:number) => {
-    setSelectedOption(index === selectedOption ? null : index);
-    setSelectedRectangle(index === selectedOption ? null : item);
-    setId(id);
-    setShowAlertEdit(true);
+    setSelectedRectangle(item); // Mettre à jour l'état selectedRectangle
+    setId(id); // Mettre à jour l'ID sélectionné
+    setShowAlertEdit(true); // Afficher l'alerte
   };
 
   return (
     <View style={styles.container}>
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title" style={styles.centeredText}>RangdongIoT</ThemedText>
+        <Image
+          source={require('@/assets/images/logo_vietnam.png')}
+          style={styles.flag_viet}
+        />
+        <Image
+          source={require('@/assets/images/rang-dong-icon.png')}
+          style={styles.rang}
+        />
       </ThemedView>
-      <Image
-        source={require('@/assets/images/logo_vietnam.png')}
-        style={styles.flag_viet}
-      />
-      <Image
-        source={require('@/assets/images/rang-dong-icon.png')}
-        style={styles.rang}
-      />
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle" style={styles.centeredTextSub}>Database</ThemedText>
       </ThemedView>
@@ -198,7 +197,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFF',
+    backgroundColor: 'transparent',
+    paddingBottom : 65
   },
   container: {
     flex: 1,
@@ -207,19 +207,20 @@ const styles = StyleSheet.create({
     paddingTop: 120,
   },
   flag_viet: {
-    width: 76,
+    width: 58,
     height: 65,
     position: 'absolute',
-    marginLeft: 20,
-    marginTop: 120,
+    left: 25, // Aligner l'image à gauche
+    top: 0, // Facultatif : positionner l'image au sommet
+    resizeMode: 'contain',
     zIndex: 1,
   },
   rang: {
     width: 58,
     height: 55,
     position: 'absolute',
-    marginHorizontal: 280,
-    marginTop: 120,
+    right: 25, // Aligner l'image à gauche
+    top: 0, // Facultatif : positionner l'image au sommet
     resizeMode: 'contain',
     zIndex: 1,
   },
@@ -238,31 +239,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#AAB565',
     width: 80,
     height: 24,
-    left: 100,
+    position: 'absolute',
+    right: 20, // Ajustez cette valeur selon votre mise en page
+    top: 20, // Ajustez cette valeur selon votre mise en page
     borderRadius: 10,
-  },
+  },  
   buttonText: {
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
-  },
+  },   
   rectangle: {
     width: 320,
-    height: 65,
-    backgroundColor: '#BE9F9F70',
+    height: 68,
+    backgroundColor: '#BE9F9F70', // Couleur de fond du rectangle
     justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'left',
-    marginVertical: 5,
-    borderRadius: 10,
+    alignItems: 'flex-start',
+    marginVertical: 5, // Marge horizontale entre les rectangles
+    borderRadius: 10, // Arrondi des coins du rectangle
   },
   rectangleText: {
-    color: '#000000',
-    fontSize: 12,
-    textAlign: 'left',
-    right: 80,
-    //alignItems: 'center'
+    color: '#000000', // Couleur du texte du rectangle
+    fontSize: 12, // Taille de police du texte du rectangle
+    left: 22,
   },
   rectangleTextBold: {
     color: '#000000',
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   },
   touchable: {
     position: 'absolute',
-    right: 20,
-    top: '15%',
+    right: 7,
+    top: '10%',
   },
 });
