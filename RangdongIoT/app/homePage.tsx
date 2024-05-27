@@ -13,6 +13,7 @@ const HomePage = ({ navigation }: any) => {
   const [showAlertEdit, setShowAlertEdit] = useState<boolean>(false);
   const [selectedRectangle, setSelectedRectangle] = useState<any>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [idData, setId] = useState<number>(0);
   const [fetchedData, setFetchedData] = useState<any[]>([]);
   const [toggleValue, setToggleValue] = useState<boolean>(false);
 
@@ -38,7 +39,7 @@ const HomePage = ({ navigation }: any) => {
 
   const unShowBoxEdit = async () => {
     console.log(`Delete pressed`);
-    handleDeleteRequest();
+    handleDeleteRequest(idData);
     setShowAlertEdit(false);
     getUpdate();
   };
@@ -64,9 +65,10 @@ const HomePage = ({ navigation }: any) => {
     }, [])
   );
 
-  const handleOptionPressRond = (index: number, item: any) => {
+  const handleOptionPressRond = (index: number, item: any, id:number) => {
     setSelectedOption(index === selectedOption ? null : index);
     setSelectedRectangle(index === selectedOption ? null : item);
+    setId(id);
     setShowAlertEdit(true);
   };
 
@@ -108,7 +110,7 @@ const HomePage = ({ navigation }: any) => {
                 </ThemedText>
               </View>
 
-              <TouchableOpacity onPress={() => handleOptionPressRond(index, item)} style={styles.touchable}>
+              <TouchableOpacity onPress={() => handleOptionPressRond(index, item, item.id)} style={styles.touchable}>
                 {selectedOption === index && (
                   <View style={styles.largeCircle}>
                     <View style={styles.roundContainer}>
@@ -125,15 +127,17 @@ const HomePage = ({ navigation }: any) => {
                   </View>
                 )}
                 {selectedOption !== index && (
-                  <View style={styles.roundContainer}>
-                    {[...Array(3)].map((_, optionIndex) => (
-                      <View
-                        key={optionIndex}
-                        style={[
-                          styles.optionDot,
-                        ]}
-                      />
-                    ))}
+                  <View style={styles.largeCircle}>
+                    <View style={styles.roundContainer}>
+                      {[...Array(3)].map((_, optionIndex) => (
+                        <View
+                          key={optionIndex}
+                          style={[
+                            styles.optionDot,
+                          ]}
+                        />
+                      ))}
+                    </View>
                   </View>
                 )}
               </TouchableOpacity>
@@ -258,7 +262,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'left',
     right: 80,
-    alignItems: 'flex-start'
+    //alignItems: 'center'
   },
   rectangleTextBold: {
     color: '#000000',
@@ -293,6 +297,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
+    marginRight: -15,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF1A',
@@ -300,7 +305,6 @@ const styles = StyleSheet.create({
   touchable: {
     position: 'absolute',
     right: 20,
-    top: '50%',
-    transform: [{ translateY: -25 }],
+    top: '15%',
   },
 });

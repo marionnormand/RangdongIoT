@@ -125,7 +125,7 @@ const NewPage = ({navigation}: any) => {
         visible={showAlert}
         message={
           <Text>
-            {isSend === true ? "Changes applied successfully." : "Unable to apply changes."}
+            {isSend === true ? "New data created successfuly" : "Unable to create new data"}
           </Text>
         }
         onCancel={handleCancel}

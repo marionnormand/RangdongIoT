@@ -1,8 +1,8 @@
-const todoId = '0'; 
-const apiUrl = 'https://digitaldev.io.vn/todos/Testdb_Todo/dbmarion/' + todoId;
+
 const content_type = 'application/json';
 
-export const handleDeleteRequest = () => {
+export const handleDeleteRequest = (id:number) => {
+    const apiUrl = 'https://digitaldev.io.vn/todos/Testdb_Todo/dbmarion/' + id; 
     fetch(apiUrl, {
         method: 'DELETE',
         headers: {
