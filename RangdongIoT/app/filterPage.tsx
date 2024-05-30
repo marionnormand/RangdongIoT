@@ -4,24 +4,26 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import CustomAlertBoxNew from "@/components/CustomAlertBoxNew";
 import CustomAlertBoxEdit from "@/components/CustomAlertBoxEdit";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoute, RouteProp } from '@react-navigation/native';
 import { handleDeleteRequest } from './network/delete';
 import { handleGetRequest } from './network/get';
-
-import { TemplateRangdong } from './templates/templateRangdong'
-
+import { RootStackParamList } from './_layout';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
-const HomePage = ({ navigation }: any) => {
+const FilterPage = ({ navigation }: any) => {
   const [showAlertNew, setShowAlertNew] = useState<boolean>(false);
   const [showAlertEdit, setShowAlertEdit] = useState<boolean>(false);
   const [selectedRectangle, setSelectedRectangle] = useState<any>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [idData, setId] = useState<number>(0);
   const [fetchedData, setFetchedData] = useState<any[]>([]);
-  const [filter, setFilter] = useState('');
+  const [newFilter, setFilter] = useState('');
+
+
+  const route = useRoute<RouteProp<RootStackParamList, 'filterPage'>>();
+  const { filter } = route.params;
 
   const GoEdit = () => {
     navigation.navigate('editPage', { rectangle: selectedRectangle });
@@ -75,7 +77,7 @@ const HomePage = ({ navigation }: any) => {
     const intervalId = setInterval(() => {
       getUpdate();
     }, 5000);
-  
+    
     return () => clearInterval(intervalId); // Nettoyer l'intervalle lors du démontage du composant
   }, []); // Le tableau vide en second argument indique que cet effet ne dépend d'aucune variable, donc il ne s'exécute qu'une seule fois après le montage initial du composant
   
@@ -86,38 +88,20 @@ const HomePage = ({ navigation }: any) => {
     setShowAlertEdit(true); // Afficher l'alerte
   };
 
-  const goToFilter = () => {
-    navigation.navigate('filterPage', {filter});
-  };
-
-  const openEdit = () => {
-    navigation.navigate('editProfile');
-  }
-
   return (
     <View style={styles.container}>
-      <View style={styles.editProfileContainer}>
-        <TouchableOpacity onPress={openEdit}>
-          <ThemedText style={styles.textProfile}>Edit profile</ThemedText>
-        </TouchableOpacity>
-      </View>
       <ThemedView style={styles.row}>
         <TextInput
           style={[styles.input, {paddingLeft: 10}]}
-          placeholder="Filter"
+          placeholder={filter}
           placeholderTextColor="#828282"
-          value={filter}
+          value={newFilter}
           onChangeText={text => setFilter(text)}
         />
-        <TouchableOpacity style={styles.buttonFilter} onPress={goToFilter}>
+        <TouchableOpacity style={styles.buttonFilter}>
           <ThemedText style={styles.buttonText}>Filter</ThemedText>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonNew} onPress={handleNewPress}>
-          <ThemedText style={styles.buttonText}>New</ThemedText>
-        </TouchableOpacity>
       </ThemedView>
-
-     
       <ThemedView style={styles.scrollContainer}>
         <ScrollView style={styles.scrollView} indicatorStyle="black">
           {fetchedData.map((item, index) => (
@@ -210,35 +194,14 @@ const HomePage = ({ navigation }: any) => {
   );
 };
 
-export default HomePage;
+export default FilterPage;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'white',
     paddingHorizontal: 20,
     paddingTop: 120,
-  },
-  containerEdit: {
-    position: 'absolute',
-    top: 200, // Ajustez selon votre préférence
-    paddingHorizontal: 10,
-    alignItems: 'center', 
-    justifyContent: 'flex-start', 
-    width: windowWidth,
-    //zIndex: 1, // Assure que le conteneur est au-dessus des autres éléments
-    backgroundColor: 'white',
-  },
-  row: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    alignItems: 'center',
-    width: windowWidth,
-    height: 50,
-    top: 292,
-    left: 0,
-    right:0,
-    position: 'absolute',
   },
   centeredText: {
     textAlign: 'center',
@@ -251,30 +214,21 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontStyle: 'italic',
   },
-  buttonNew: {
-    width: 90,
-    height: 30,
-    borderRadius: 6,
-    position: 'absolute',
-    right: 20, 
+  button: {
     backgroundColor: '#AAB565',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },  
-  buttonFilter: {
-    width: 60,
+    width: 80,
     height: 24,
-    borderRadius: 10,
     position: 'absolute',
-    right: 150, 
-    backgroundColor: '#5DA2A6',
-  },
+    right: 20, // Ajustez cette valeur selon votre mise en page
+    top: 20, // Ajustez cette valeur selon votre mise en page
+    borderRadius: 10,
+  },  
   buttonText: {
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
-  },
+  },   
   rectangle: {
     width: 320,
     height: 68,
@@ -344,15 +298,23 @@ const styles = StyleSheet.create({
     //width: 40,
     //height: 50,
   },
-  editProfileContainer: {
-    marginTop: 20, // Ajustez cette valeur pour positionner correctement le texte
+  row: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white'
+    width: windowWidth,
+    height: 50,
+    top: 292,
+    left: 0,
+    right:0,
+    position: 'absolute',
   },
-  textProfile: {
-    color: '#933434',
-    textAlign: 'center',
-    padding: 10,
+  buttonFilter: {
+    width: 60,
+    height: 24,
+    borderRadius: 10,
+    position: 'absolute',
+    right: 150, 
+    backgroundColor: '#5DA2A6',
   },
 });

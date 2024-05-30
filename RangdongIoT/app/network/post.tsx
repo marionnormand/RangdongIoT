@@ -1,6 +1,6 @@
 import { DataToSend } from './DataToSend'
 
-const url = 'https://digitaldev.io.vn/todos/Testdb_Todo/dbmarion';
+const url = 'https://digitaldev.io.vn/todos';
 const content_type = 'application/json';
 
 export const handlePostRequest = (data:DataToSend) => {

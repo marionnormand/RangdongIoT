@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { Image, TextInput, LogBox } from 'react-native';
+import { TextInput } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import CustomAlertBoxNew from "@/components/CustomAlertBoxNew";
 import { Switch } from 'react-native-switch';
 import { useRoute } from '@react-navigation/native';
@@ -10,8 +9,8 @@ import { RouteProp } from '@react-navigation/native';
 
 
 import { handlePutRequest } from './network/put'
-import { DataToSend } from './network/DataToSend'
 import { RootStackParamList } from './_layout';
+import { TemplateRangdong } from './templates/templateRangdong'
 
 
 const EditPage = ({ navigation }: any) => {
@@ -33,12 +32,6 @@ const EditPage = ({ navigation }: any) => {
       setId(rectangle.id || 0); // converti en boolean 
     }
   }, [rectangle]);
-
-  const newData = {
-    name: name,
-    mac: mac,
-    status: toggleValue,
-  };
 
   const handleCancel = () => {
     console.log(`Cancel pressed`);
@@ -69,20 +62,8 @@ const EditPage = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title" style={styles.centeredText}>RangdongIoT</ThemedText>
-      </ThemedView>
-      <Image
-        source={require('@/assets/images/logo_vietnam.png')}
-        style={styles.flag_viet}
-      />
-      <Image
-        source={require('@/assets/images/rang-dong-icon.png')}
-        style={styles.rang}
-      />
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle" style={styles.centeredTextSub}>Edit database</ThemedText>
-      </ThemedView>
+      {TemplateRangdong('Edit database')}
+
       <View style={styles.inputContainer}>
         <View style={styles.inputRow}>
           <Text style={styles.label}>Name :</Text>
@@ -161,15 +142,13 @@ const styles = StyleSheet.create({
   activeText: {
     color: '#FFFFFF',
     fontSize: 16,
-    //fontWeight: 'bold',
-    position: 'absolute', // Pour positionner le texte 'ON'
-    //left: 5, // Ajustez la position du texte 'ON' par rapport au cercle
+    position: 'absolute', 
   },
   inactiveText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: 10, // Marge pour le texte 'OFF'
+    marginLeft: 10, 
   },
   titleContainer: {
     flexDirection: 'row',
@@ -194,8 +173,6 @@ const styles = StyleSheet.create({
     width: 76,
     height: 65,
     position: 'absolute',
-    //top: 95,
-    //left: 25,
     marginLeft: 20,
     marginTop: 120,
     zIndex: 1, 
@@ -204,8 +181,6 @@ const styles = StyleSheet.create({
     width: 58,
     height: 55,
     position: 'absolute',
-    //top: 100,
-    //right: 45,
     marginHorizontal: 280,
     marginTop: 120,
     resizeMode: 'contain',
@@ -244,7 +219,6 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: 'column',
-    //alignItems: 'flex-start',
     paddingTop: 120,
   },
   label: {
