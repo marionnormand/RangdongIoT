@@ -66,20 +66,34 @@ const EditProfile = ({ navigation }: any) => {
             <View style={styles.editProfileContainer}>
                 <TouchableOpacity onPress={pickImage}>
                     <Image source={image} style={styles.image} />
-                    <Text style={styles.textProfile}>Edit profile</Text>
+                    <Text style={styles.textProfile}>Edit image</Text>
                 </TouchableOpacity>
             </View>
-            <View style={styles.row}>
-                <ThemedText type="subtitle" style={styles.text}>Username</ThemedText>
-                <ThemedText style={styles.text}>Database</ThemedText>
-            </View>
-            <View style={styles.row}>
-                <ThemedText type="subtitle" style={styles.text}>Email</ThemedText>
-                <ThemedText style={styles.text}>Email</ThemedText>
-            </View>
-            <View style={styles.row}>
-                <ThemedText type="subtitle" style={styles.text}>Password</ThemedText>
-                <ThemedText style={styles.text}>Password</ThemedText>
+            <View style= {{marginTop: 50}}>
+              <View style={styles.row}>
+                  <ThemedText type="subtitle" style={styles.text}>Username</ThemedText>
+                  <View style={styles.textContainer}>
+                      <ThemedText style={styles.text}>Database</ThemedText>
+                  </View>
+                  <TouchableOpacity >
+                      <Image
+                          source={require('@/assets/images/chevron_right.png')}
+                          style={styles.chevron}
+                      />
+                  </TouchableOpacity>
+              </View>
+              <View style={styles.row}>
+                  <ThemedText type="subtitle" style={styles.text}>Email</ThemedText>
+                  <View style={styles.textContainer}>
+                      <ThemedText style={styles.text}>Email</ThemedText>
+                  </View>
+              </View>
+              <View style={styles.row}>
+                  <ThemedText type="subtitle" style={styles.text}>Password</ThemedText>
+                  <View style={styles.textContainer}>
+                      <ThemedText style={styles.text}>Password</ThemedText>
+                  </View>
+              </View>
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={BackHome}>
@@ -99,10 +113,11 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'column',
         paddingHorizontal: 50,
-        paddingTop: 120,
+        paddingTop: 20,
         width: windowWidth,
         height: windowHeight,
         backgroundColor: 'white',
+        //justifyContent: 'center',
     },
     text: {
         textAlign: 'center',
@@ -114,21 +129,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 25,
         width: '100%',
-        paddingTop: 50,
+        paddingTop: 30,
     },
     buttonContainer: {
-        flexDirection: 'row',
-        right: 110,
-        paddingTop: 50,
-        justifyContent: 'space-between',
-        marginRight: 70,
+      flexDirection: 'row',
+      paddingTop: 50,
+      justifyContent: 'space-between',
     },
     button: {
-        backgroundColor: '#AAB565',
-        width: 85,
-        height: 63,
-        left: 140,
-        borderRadius: 10,
+      backgroundColor: '#AAB565',
+      width: 85,
+      height: 63,
+      borderRadius: 10,
     },
     buttonText: {
         color: '#FFFFFF',
@@ -144,7 +156,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#5DA2A6',
     },
     editProfileContainer: {
-        marginTop: 10,
+        marginTop: 100,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'white',
@@ -159,4 +171,15 @@ const styles = StyleSheet.create({
         height: 100, /* Hauteur de l'image */
         borderRadius: 50, /* Pour rendre l'image ronde */
     },
+    chevron: {
+        width: 20,
+        height: 20,
+        left: 30,
+    },
+    textContainer: {
+      flex: 1,
+      //alignItems: 'center',
+      left: -20,
+  },
+  
 });

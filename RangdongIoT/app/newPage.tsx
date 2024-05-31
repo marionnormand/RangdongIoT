@@ -9,6 +9,7 @@ import { Switch } from 'react-native-switch';
 import { handlePost } from './network/post'
 import { DataToSend } from './network/DataToSend'
 import { TemplateRangdong } from './templates/templateRangdong'
+import { useError } from './error/errorContext';
 
 
 const NewPage = ({navigation}: any) => {
@@ -19,6 +20,7 @@ const NewPage = ({navigation}: any) => {
   const [isSend, setIsSend] = useState(false);
   const [toggleValue, setToggleValue] = useState(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
+  const { error, setError } = useError(); 
 
   const newData: DataToSend = {
     name: name,
@@ -34,7 +36,7 @@ const NewPage = ({navigation}: any) => {
   const handleSave = async () => {
     console.log(`Save pressed`);
     try {
-      await handlePost(newData, 1);
+      await handlePost(newData, 1, setError);
       setIsSend(true);
       setShowAlert(true); // Afficher l'alerte
     } catch (error) {
@@ -111,11 +113,7 @@ const NewPage = ({navigation}: any) => {
       </View>
       <CustomAlertBoxNew
         visible={showAlert}
-        message={
-          <Text>
-            {isSend === true ? "New data created successfuly" : "Unable to create new data"}
-          </Text>
-        }
+        message={isSend === true ? "New data created successfuly" : "Unable to create new data"}
         onCancel={handleCancel}
         onConfirm={BackHome}
         confirmButtonText='OK'
