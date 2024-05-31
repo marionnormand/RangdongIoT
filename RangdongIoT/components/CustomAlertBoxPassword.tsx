@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, TextStyle, ViewStyle, TextInput, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import { BlurView } from 'expo-blur';
 
@@ -13,7 +13,9 @@ interface CustomAlertBoxProps {
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
-const CustomAlertBoxPassword: React.FC<CustomAlertBoxProps> = ({ visible, message, onConfirm, confirmButtonText = 'Send email', textInput}) => {
+const CustomAlertBoxPassword: React.FC<CustomAlertBoxProps> = ({ visible, message, onConfirm, confirmButtonText, textInput}) => {
+  const [inputText, setInputText] = useState(textInput || '');
+
   return (
     <Modal
       animationType="slide"
@@ -29,8 +31,8 @@ const CustomAlertBoxPassword: React.FC<CustomAlertBoxProps> = ({ visible, messag
                 style={styles.input}
                 placeholder={textInput}
                 placeholderTextColor="#828282"
-                value={textInput}
-                onChangeText={text => text}
+                value={inputText}
+                onChangeText={setInputText}
               />
               <TouchableOpacity style={[styles.button, styles.confirmButton]} onPress={onConfirm}>
                 <Text style={styles.buttonText}>{confirmButtonText}</Text>

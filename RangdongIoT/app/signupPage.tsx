@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, Image, StyleSheet, TextInput, Dimensions } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { useError } from './error/errorContext';
 
 import { TemplateRangdong } from './templates/templateRangdong'
+import { DataSignup } from './network/DataToSend';
+import { handlePost } from './network/post'
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -13,9 +16,17 @@ const SignupPage = ({ navigation }: any) => {
     const [email, setEmail] = useState(''); 
     const [password, setPassword] = useState(''); 
     const [username, setUsername] = useState(''); 
+    const { error, setError } = useError(); 
+
+    const newData: DataSignup = {
+        email: email, 
+        username: username,
+        password: password,
+    };
 
     const SignUp = () => {
-        navigation.navigate('loginPage');
+        handlePost(newData, 3, setError);
+        //navigation.navigate('loginPage');
     };
     
     return (
@@ -48,10 +59,10 @@ const SignupPage = ({ navigation }: any) => {
                 </ThemedView>
             </View>        
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={SignUp}>
+                <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => navigation.navigate('loginPage')}>
                 <ThemedText style={styles.buttonText}>Cancel</ThemedText>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, styles.signupButton]} onPress={() => navigation.navigate('loginPage')}>
+                <TouchableOpacity style={[styles.button, styles.signupButton]} onPress={SignUp}>
                 <ThemedText style={styles.buttonText}>Save</ThemedText>
                 </TouchableOpacity>
             </View>    

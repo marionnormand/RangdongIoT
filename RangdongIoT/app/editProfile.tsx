@@ -3,14 +3,12 @@ import { View, StyleSheet, Text, Dimensions, TouchableOpacity, Image, Alert } fr
 import { ThemedText } from '@/components/ThemedText';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
 const EditProfile = ({ navigation }: any) => {
-
-    const defaultImage = require('@/assets/images/react-logo.png')
+    const defaultImage = require('@/assets/images/react-logo.png');
     const [image, setImage] = useState(defaultImage);
 
     const BackHome = () => {
@@ -24,63 +22,52 @@ const EditProfile = ({ navigation }: any) => {
                 Alert.alert('Permission required', 'Please allow access to the gallery.');
             }
         })();
-        const loadImage = async () => {
-          try {
-            const savedImageUri = await AsyncStorage.getItem('profileImage');
-            if (savedImageUri !== null) {
-              setImage({ uri: savedImageUri });
-            }
-          } catch (error) {
-            console.error('Erreur lors du chargement de l\'image :', error);
-          }
-        };
-      
-        // Chargez l'image lorsque le composant est monté
         loadImage();
     }, []);
-      
-    
+
     const loadImage = async () => {
         try {
-          const savedImageUri = await AsyncStorage.getItem('profileImage');
-          if (savedImageUri !== null) {
-            setImage({ uri: savedImageUri });
-          }
+            const savedImageUri = await AsyncStorage.getItem('profileImage');
+            if (savedImageUri !== null) {
+                setImage({ uri: savedImageUri });
+            }
         } catch (error) {
-          console.error('Erreur lors du chargement de l\'image :', error);
+            console.error('Erreur lors du chargement de l\'image :', error);
         }
-      };
-    
-      const saveImage = async (imageUri:any) => {
-        try {
-          await AsyncStorage.setItem('profileImage', imageUri);
-        } catch (error) {
-          console.error('Erreur lors de l\'enregistrement de l\'image :', error);
-        }
-      };
-    
-      // ouvre galerie photo et selectionne image 
-      const pickImage = async () => {
-        let result: ImagePicker.ImagePickerResult = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          aspect: [1, 1],
-          quality: 1,
-        });
-    
-        if (!result.canceled && 'uri' in result) {
-          setImage({ uri: result.uri });
-          saveImage(result.uri);
-        }
-      };
+    };
 
+    const saveImage = async (imageUri: string) => {
+        try {
+            await AsyncStorage.setItem('profileImage', imageUri);
+        } catch (error) {
+            console.error('Erreur lors de l\'enregistrement de l\'image :', error);
+        }
+    };
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+          const { uri } = result.assets[0];
+          setImage({ uri });
+          saveImage(uri);
+          console.log('New image selected:', uri);
+      }
+    };
+
+ //           
     return (
         <View style={styles.container}>
             <View style={styles.editProfileContainer}>
-            <TouchableOpacity onPress={pickImage} style={styles.containerPicture}>
-                <Image source={image} style={styles.image} />
-            </TouchableOpacity>
-                <Text style={styles.textProfile}>Edit profile </Text>
+                <TouchableOpacity onPress={pickImage}>
+                    <Image source={image} style={styles.image} />
+                    <Text style={styles.textProfile}>Edit profile</Text>
+                </TouchableOpacity>
             </View>
             <View style={styles.row}>
                 <ThemedText type="subtitle" style={styles.text}>Username</ThemedText>
@@ -96,17 +83,17 @@ const EditProfile = ({ navigation }: any) => {
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={BackHome}>
-                <ThemedText style={styles.buttonText}>Cancel</ThemedText>
+                    <ThemedText style={styles.buttonText}>Cancel</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.button, styles.confirmButton]} onPress={BackHome}>
-                <ThemedText style={styles.buttonText}>Save</ThemedText>
+                    <ThemedText style={styles.buttonText}>Save</ThemedText>
                 </TouchableOpacity>
             </View>
         </View>
     );
 };
 
-export default EditProfile; 
+export default EditProfile;
 
 const styles = StyleSheet.create({
     container: {
@@ -125,55 +112,51 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 40,
-        width: '90%',
+        marginBottom: 25,
+        width: '100%',
+        paddingTop: 50,
     },
     buttonContainer: {
-      flexDirection: 'row',
-      right: 110,
-      paddingTop: 50,
-      justifyContent: 'space-between',
-      marginRight: 70,
+        flexDirection: 'row',
+        right: 110,
+        paddingTop: 50,
+        justifyContent: 'space-between',
+        marginRight: 70,
     },
     button: {
-      backgroundColor: '#AAB565',
-      width: 85,
-      height: 63,
-      left: 140,
-      borderRadius: 10,
+        backgroundColor: '#AAB565',
+        width: 85,
+        height: 63,
+        left: 140,
+        borderRadius: 10,
     },
     buttonText: {
-      color: '#FFFFFF',
-      fontSize: 15,
-      marginTop: 20,
-      fontWeight: 'bold',
-      textAlign: 'center',
+        color: '#FFFFFF',
+        fontSize: 15,
+        marginTop: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
     cancelButton: {
-      backgroundColor: '#C94A4A',
+        backgroundColor: '#C94A4A',
     },
     confirmButton: {
-      backgroundColor: '#5DA2A6', 
+        backgroundColor: '#5DA2A6',
     },
     editProfileContainer: {
-      marginTop: 20, // Ajustez cette valeur pour positionner correctement le texte
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: 'white'
+        marginTop: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white',
     },
     textProfile: {
-      color: '#933434',
-      textAlign: 'center',
-      padding: 10,
+        marginTop: 10, /* Espace au-dessus du texte */
+        color: '#933434',
+        textAlign: 'center',
     },
     image: {
-      width: '100%',
-      height: '100%',
-    },
-    containerPicture: {
-      width: 100,
-      height: 100,
-      borderRadius: 50,
-      overflow: 'hidden',
+        width: 100, /* Largeur de l'image */
+        height: 100, /* Hauteur de l'image */
+        borderRadius: 50, /* Pour rendre l'image ronde */
     },
 });

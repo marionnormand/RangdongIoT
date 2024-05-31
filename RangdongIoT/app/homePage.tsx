@@ -7,6 +7,8 @@ import CustomAlertBoxEdit from "@/components/CustomAlertBoxEdit";
 import { useFocusEffect } from '@react-navigation/native';
 import { handleDeleteRequest } from './network/delete';
 import { handleGetRequest } from './network/get';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from '@react-navigation/native';
 
 import { TemplateRangdong } from './templates/templateRangdong'
 
@@ -22,6 +24,10 @@ const HomePage = ({ navigation }: any) => {
   const [idData, setId] = useState<number>(0);
   const [fetchedData, setFetchedData] = useState<any[]>([]);
   const [filter, setFilter] = useState('');
+  
+  const defaultImage = require('@/assets/images/react-logo.png');
+  const [image, setImage] = useState(defaultImage);
+  const isFocused = useIsFocused();
 
   const GoEdit = () => {
     navigation.navigate('editPage', { rectangle: selectedRectangle });
@@ -72,13 +78,26 @@ const HomePage = ({ navigation }: any) => {
 
   
   useEffect(() => {
+    if (isFocused) {
+      loadImage();
+    } 
     const intervalId = setInterval(() => {
       getUpdate();
     }, 5000);
   
     return () => clearInterval(intervalId); // Nettoyer l'intervalle lors du démontage du composant
-  }, []); // Le tableau vide en second argument indique que cet effet ne dépend d'aucune variable, donc il ne s'exécute qu'une seule fois après le montage initial du composant
+  }, [isFocused]); // Le tableau vide en second argument indique que cet effet ne dépend d'aucune variable, donc il ne s'exécute qu'une seule fois après le montage initial du composant
   
+  const loadImage = async () => {
+    try {
+        const savedImageUri = await AsyncStorage.getItem('profileImage');
+        if (savedImageUri !== null) {
+            setImage({ uri: savedImageUri });
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement de l\'image :', error);
+    }
+};
 
   const handleOptionPressRond = (index: number, item: any, id:number) => {
     setSelectedRectangle(item); // Mettre à jour l'état selectedRectangle
@@ -98,6 +117,7 @@ const HomePage = ({ navigation }: any) => {
     <View style={styles.container}>
       <View style={styles.editProfileContainer}>
         <TouchableOpacity onPress={openEdit}>
+          <Image source={image} style={[styles.image, { width: 80, height: 80 }]} />
           <ThemedText style={styles.textProfile}>Edit profile</ThemedText>
         </TouchableOpacity>
       </View>
@@ -217,7 +237,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
-    paddingTop: 120,
+    paddingTop: 100,
   },
   containerEdit: {
     position: 'absolute',
@@ -228,6 +248,11 @@ const styles = StyleSheet.create({
     width: windowWidth,
     //zIndex: 1, // Assure que le conteneur est au-dessus des autres éléments
     backgroundColor: 'white',
+  },
+  image: {
+    width: 120, /* Largeur de l'image */
+    height: 120, /* Hauteur de l'image */
+    borderRadius: 60, /* Pour rendre l'image ronde */
   },
   row: {
     flexDirection: 'row',
@@ -345,14 +370,15 @@ const styles = StyleSheet.create({
     //height: 50,
   },
   editProfileContainer: {
-    marginTop: 20, // Ajustez cette valeur pour positionner correctement le texte
+    marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    paddingTop: 10, // Ajoutez une marge en haut pour espacer le texte de l'image
   },
   textProfile: {
     color: '#933434',
     textAlign: 'center',
-    padding: 10,
+    marginTop: 10, // Ajoutez une marge au-dessus du texte pour l'espacer de l'image
   },
 });

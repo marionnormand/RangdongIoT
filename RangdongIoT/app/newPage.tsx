@@ -6,7 +6,7 @@ import { ThemedView } from '@/components/ThemedView';
 import CustomAlertBoxNew from "@/components/CustomAlertBoxNew";
 import { Switch } from 'react-native-switch';
 
-import { handlePostRequest } from './network/post'
+import { handlePost } from './network/post'
 import { DataToSend } from './network/DataToSend'
 import { TemplateRangdong } from './templates/templateRangdong'
 
@@ -34,7 +34,7 @@ const NewPage = ({navigation}: any) => {
   const handleSave = async () => {
     console.log(`Save pressed`);
     try {
-      await handlePostRequest(newData);
+      await handlePost(newData, 1);
       setIsSend(true);
       setShowAlert(true); // Afficher l'alerte
     } catch (error) {

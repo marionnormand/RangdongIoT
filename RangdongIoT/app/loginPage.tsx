@@ -3,17 +3,26 @@ import { View, TouchableOpacity, Image, StyleSheet, TextInput, Text, Dimensions 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import CustomAlertBoxPassword from "@/components/CustomAlertBoxPassword";
+import { useError } from './error/errorContext';
 
 import { TemplateRangdong } from './templates/templateRangdong'
+import { DataAuthen } from './network/DataToSend';
+import { handlePost } from './network/post'
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
 const LoginPage = ({ navigation }: any) => {
-    const [email, setEmail] = useState(''); 
+    const [username, setUsername] = useState(''); 
     const [password, setPassword] = useState(''); 
     const [showAlert, setShowAlert] = useState(false);
+    const { error, setError } = useError(); 
 
+    const newData: DataAuthen = {
+        username: username,
+        password: password,
+    };
+    
     const closeAlert = () => {
         setShowAlert(false);
     };
@@ -21,6 +30,23 @@ const LoginPage = ({ navigation }: any) => {
     const openAlert = () => {
         setShowAlert(true);
     };
+
+    const buttonLogin = () => {
+        handlePost(newData, 2, setError);
+        navigation.navigate('homePage');
+        if ( error == 200 ) {
+            console.log('login win')
+            navigation.navigate('homePage');
+        }
+        else if ( error == 400 ) {
+            console.log('ERROR : Missing arguments')
+        }
+        else if ( error == 401 ) {
+            console.log('ERROR : Error in password or username')
+        }
+        
+    }
+
 
     return (
         <View style={styles.container}>
@@ -32,10 +58,10 @@ const LoginPage = ({ navigation }: any) => {
                     </ThemedView>
                     <TextInput
                         style={styles.input}
-                        placeholder="email@domain.com"
+                        placeholder="username"
                         placeholderTextColor="#828282"
-                        value={email}
-                        onChangeText={newText => setEmail(newText)}
+                        value={username}
+                        onChangeText={newText => setUsername(newText)}
                     />
                     <TextInput
                         style={styles.input}
@@ -48,7 +74,7 @@ const LoginPage = ({ navigation }: any) => {
                     <TouchableOpacity onPress={openAlert}>
                         <ThemedText style={styles.textPassword}> Forgotten password </ThemedText>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.button, styles.buttonLogin]} onPress={() => navigation.navigate('homePage')}>
+                    <TouchableOpacity style={[styles.button, styles.buttonLogin]} onPress={() => buttonLogin()}>
                         <ThemedText style={styles.buttonText}>Log in</ThemedText>
                     </TouchableOpacity>
                     <ThemedText type="subtitle" style={styles.text}>New user ? Sign up !</ThemedText>
@@ -59,14 +85,12 @@ const LoginPage = ({ navigation }: any) => {
             </View> 
             <CustomAlertBoxPassword
                 visible={showAlert}
-                message={
-                    <Text>
-                        {"Enter your email to send a new password"}
-                    </Text>
-                }
+                message="Enter your email to send a new password"
                 onConfirm={closeAlert}
                 confirmButtonText='Send email'
+                textInput='email@domain.com'
             />
+
         </View>
     );
 }

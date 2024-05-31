@@ -3,6 +3,7 @@ import { useFonts } from 'expo-font';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { ErrorProvider } from './error/errorContext';
 
 import LoginPage from './loginPage';
 import HomePage from './homePage';
@@ -49,15 +50,17 @@ const RootLayout = () => {
   }
 
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-    <Stack.Screen name="loginPage" component={LoginPage} />
-      <Stack.Screen name="homePage" component={HomePage} />
-      <Stack.Screen name="editPage" component={EditPage} />
-      <Stack.Screen name="newPage" component={NewPage} />
-      <Stack.Screen name="signupPage" component={SignupPage} />
-      <Stack.Screen name="filterPage" component={FilterPage} />
-      <Stack.Screen name="editProfile" component={EditProfile} />
-    </Stack.Navigator>
+    <ErrorProvider>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="loginPage" component={LoginPage} />
+          <Stack.Screen name="homePage" component={HomePage} />
+          <Stack.Screen name="editPage" component={EditPage} />
+          <Stack.Screen name="newPage" component={NewPage} />
+          <Stack.Screen name="signupPage" component={SignupPage} />
+          <Stack.Screen name="filterPage" component={FilterPage} />
+        <Stack.Screen name="editProfile" component={EditProfile} />
+      </Stack.Navigator>
+    </ErrorProvider>
   );
 };
 
