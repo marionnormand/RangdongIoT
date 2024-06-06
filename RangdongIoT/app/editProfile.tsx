@@ -167,8 +167,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     image: {
-        width: 100, /* Largeur de l'image */
-        height: 100, /* Hauteur de l'image */
+        width: 90, /* Largeur de l'image */
+        height: 90, /* Hauteur de l'image */
         borderRadius: 50, /* Pour rendre l'image ronde */
     },
     chevron: {

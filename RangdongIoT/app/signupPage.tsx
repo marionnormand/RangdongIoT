@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Image, StyleSheet, TextInput, Dimensions } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useError } from './error/errorContext';
+import Toast from 'react-native-root-toast';
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 import { TemplateRangdong } from './templates/templateRangdong'
 import { DataSignup } from './network/DataToSend';
-import { handlePost } from './network/post'
+import { handlePost } from './network/post';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -15,6 +17,7 @@ const SignupPage = ({ navigation }: any) => {
 
     const [email, setEmail] = useState(''); 
     const [password, setPassword] = useState(''); 
+    const [showPassword, setShowPassword] = useState(false); 
     const [username, setUsername] = useState(''); 
     const { error, setError } = useError(); 
 
@@ -24,11 +27,32 @@ const SignupPage = ({ navigation }: any) => {
         password: password,
     };
 
+    useEffect(() => {
+        console.log('useEffect triggered with error:', error);
+        if (error) {
+            let message = '';
+            if (error === 201) {
+                message = 'Sign up success';
+                navigation.navigate('homePage');
+            } else if (error === 400) {
+                message = 'Invalid input ' + error;
+            } else if (error === 500) {
+                message = 'User creation failed ' + error;
+            } else {
+                message = 'Error: ' + error;
+            }
+            Toast.show(message, { duration: Toast.durations.LONG });
+        }
+    }, [error]);
+
     const SignUp = () => {
         handlePost(newData, 3, setError);
-        //navigation.navigate('loginPage');
     };
     
+    const toggleShowPassword = () => { 
+        setShowPassword(!showPassword); 
+    }; 
+
     return (
         <View style={styles.container}>
             {TemplateRangdong('Sign up')}
@@ -48,14 +72,23 @@ const SignupPage = ({ navigation }: any) => {
                         value={email}
                         onChangeText={newText => setEmail(newText)}
                     />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="password"
-                        placeholderTextColor="#828282"
-                        value={password}
-                        onChangeText={text => setPassword(text)}
-                        secureTextEntry 
-                    />
+                    <View style={styles.row}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="password"
+                            placeholderTextColor="#828282"
+                            value={password}
+                            onChangeText={text => setPassword(text)}
+                            secureTextEntry={!showPassword}
+                        />
+                        <MaterialCommunityIcons 
+                            name={showPassword ? 'eye' : 'eye-off'} 
+                            size={24} 
+                            color="#aaa"
+                            style={styles.hide} 
+                            onPress={toggleShowPassword} 
+                        /> 
+                    </View>
                 </ThemedView>
             </View>        
             <View style={styles.buttonContainer}>
@@ -166,5 +199,17 @@ const styles = StyleSheet.create({
     },
     signupButton: {
       backgroundColor: '#5DA2A6', 
+    },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 25,
+        width: '100%',
+    },
+    hide: {
+        width: 30,
+        height: 30,
+        right: 50,
+        bottom: 12,
     },
 });

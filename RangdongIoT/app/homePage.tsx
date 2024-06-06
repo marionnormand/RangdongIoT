@@ -117,7 +117,7 @@ const HomePage = ({ navigation }: any) => {
     <View style={styles.container}>
       <View style={styles.editProfileContainer}>
         <TouchableOpacity onPress={openEdit}>
-          <Image source={image} style={[styles.image, { width: 80, height: 80 }]} />
+          <Image source={image} style={[styles.image, { width: 100, height: 100 }]} />
           <ThemedText style={styles.textProfile}>Edit profile</ThemedText>
         </TouchableOpacity>
       </View>
@@ -370,15 +370,15 @@ const styles = StyleSheet.create({
     //height: 50,
   },
   editProfileContainer: {
-    marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
-    paddingTop: 10, // Ajoutez une marge en haut pour espacer le texte de l'image
+    paddingTop: 0, 
+    marginBottom: 5,
   },
   textProfile: {
     color: '#933434',
     textAlign: 'center',
-    marginTop: 10, // Ajoutez une marge au-dessus du texte pour l'espacer de l'image
+    marginTop: 10, 
   },
 });

@@ -10,7 +10,15 @@ export interface DataAuthen {
 }
 
 export interface DataSignup {
-  email: string;
-  username: string;
-  password: string;
+    email: string;
+    username: string;
+    password: string;
+}
+
+export interface DataOTP {
+    email: string;
+}
+
+export interface DataCode {
+  code: string;
 }

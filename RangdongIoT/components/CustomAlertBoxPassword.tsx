@@ -8,15 +8,16 @@ interface CustomAlertBoxProps {
   onConfirm: () => void;
   confirmButtonText?: string; 
   textInput?: string; 
+  value: string;
+  onChangeText: (text: string) => void;
 }
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
-const CustomAlertBoxPassword: React.FC<CustomAlertBoxProps> = ({ visible, message, onConfirm, confirmButtonText, textInput}) => {
-  const [inputText, setInputText] = useState(textInput || '');
+const CustomAlertBoxPassword: React.FC<CustomAlertBoxProps> = ({ visible, message, onConfirm, confirmButtonText, textInput, value, onChangeText }) => {
 
-  return (
+   return (
     <Modal
       animationType="slide"
       transparent={true}
@@ -31,8 +32,8 @@ const CustomAlertBoxPassword: React.FC<CustomAlertBoxProps> = ({ visible, messag
                 style={styles.input}
                 placeholder={textInput}
                 placeholderTextColor="#828282"
-                value={inputText}
-                onChangeText={setInputText}
+                value={value}
+                onChangeText={onChangeText}
               />
               <TouchableOpacity style={[styles.button, styles.confirmButton]} onPress={onConfirm}>
                 <Text style={styles.buttonText}>{confirmButtonText}</Text>
