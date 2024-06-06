@@ -64,7 +64,7 @@ const CustomAlertBoxCode: React.FC<CustomAlertBoxCodeProps> = ({ visible, messag
                     />
                   ))}
                 </View>
-                <TouchableOpacity style={styles.button} onPress={onConfirm}>
+                <TouchableOpacity style={[styles.button, styles.confirmButton]} onPress={onConfirm}>
                   <ThemedText style={styles.buttonText}>{confirmButtonText}</ThemedText>
                 </TouchableOpacity>
               </View>
@@ -101,11 +101,12 @@ const styles = StyleSheet.create<Styles>({
     padding: 10,
     borderRadius: 10,
     alignItems: 'center',
-    width: windowWidth - 50,
+    width : windowWidth - 50,
   },
   message: {
     fontSize: 12,
-    marginBottom: 20,
+    marginBottom: 10,
+    marginTop:10,
     textAlign: 'center',
     flexWrap: 'wrap',
   },
