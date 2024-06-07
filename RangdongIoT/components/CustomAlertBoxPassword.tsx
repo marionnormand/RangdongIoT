@@ -12,7 +12,6 @@ interface CustomAlertBoxProps {
   onChangeText: (text: string) => void;
 }
 
-const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
 const CustomAlertBoxPassword: React.FC<CustomAlertBoxProps> = ({ visible, message, onConfirm, confirmButtonText, textInput, value, onChangeText }) => {

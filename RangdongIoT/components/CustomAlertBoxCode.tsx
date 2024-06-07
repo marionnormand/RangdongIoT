@@ -12,7 +12,6 @@ interface CustomAlertBoxCodeProps {
   onChangeText: (text: string) => void;
 }
 
-const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
 const CustomAlertBoxCode: React.FC<CustomAlertBoxCodeProps> = ({ visible, message, onConfirm, confirmButtonText, value, onChangeText }) => {
@@ -33,11 +32,11 @@ const CustomAlertBoxCode: React.FC<CustomAlertBoxCodeProps> = ({ visible, messag
     const newCode = [...code];
     newCode[index] = text;
     setCode(newCode);
+    onChangeText(newCode.join('')); // Pass the concatenated string to the parent component
     if (text.length === 1 && index < code.length - 1) {
         refs.current[index + 1]?.focus(); 
     }
 };
-
 
   return (
     <Modal

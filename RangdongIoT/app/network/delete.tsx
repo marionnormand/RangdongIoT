@@ -2,7 +2,7 @@
 const content_type = 'application/json';
 
 export const handleDeleteRequest = (id:number) => {
-    const apiUrl = 'https://digitaldev.io.vn/todos' + id; 
+    const apiUrl = 'https://digitaldev.io.vn/todos/' + id; 
     fetch(apiUrl, {
         method: 'DELETE',
         headers: {

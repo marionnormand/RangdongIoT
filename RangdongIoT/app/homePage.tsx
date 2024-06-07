@@ -10,9 +10,6 @@ import { handleGetRequest } from './network/get';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
 
-import { TemplateRangdong } from './templates/templateRangdong'
-
-
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
@@ -138,8 +135,7 @@ const HomePage = ({ navigation }: any) => {
       </ThemedView>
 
      
-      <ThemedView style={styles.scrollContainer}>
-        <ScrollView style={styles.scrollView} indicatorStyle="black">
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} indicatorStyle="black">
           {fetchedData.map((item, index) => (
             <View key={index} style={styles.rectangle}>
               <View style={{ alignItems: 'flex-start', right: 10 }}>
@@ -191,7 +187,6 @@ const HomePage = ({ navigation }: any) => {
             </View>
           ))}
         </ScrollView>
-      </ThemedView>
 
       {showAlertNew && (
         <CustomAlertBoxNew
@@ -239,31 +234,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 100,
   },
-  containerEdit: {
-    position: 'absolute',
-    top: 200, // Ajustez selon votre préférence
-    paddingHorizontal: 10,
-    alignItems: 'center', 
-    justifyContent: 'flex-start', 
-    width: windowWidth,
-    //zIndex: 1, // Assure que le conteneur est au-dessus des autres éléments
-    backgroundColor: 'white',
-  },
   image: {
-    width: 120, /* Largeur de l'image */
-    height: 120, /* Hauteur de l'image */
-    borderRadius: 60, /* Pour rendre l'image ronde */
+    width: 120,
+    height: 120,
+    borderRadius: 60,
   },
   row: {
     flexDirection: 'row',
     backgroundColor: 'white',
     alignItems: 'center',
-    width: windowWidth,
-    height: 50,
-    top: 292,
-    left: 0,
-    right:0,
-    position: 'absolute',
+    marginBottom: 20,
+    marginTop: 50,
   },
   centeredText: {
     textAlign: 'center',
@@ -320,15 +301,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   scrollView: {
-    maxHeight: windowHeight - 350,
-    maxWidth: windowWidth - 50
+    //maxHeight: windowHeight - 350,
+    //maxWidth: windowWidth - 50
+    flex: 1, 
+  },
+  scrollContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   scrollContainer: {
     gap: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 60,
+    //paddingTop: windowWidth - 200,
     backgroundColor: '#FFF',
+    flex: 1,
+
   },
   roundContainer: {
     flexDirection: 'column',

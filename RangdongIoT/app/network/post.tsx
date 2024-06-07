@@ -40,7 +40,8 @@ function isDataOTP(data: any) : data is DataOTP {
 
 function isDataCode(data: any) : data is DataCode {
   return (
-    typeof data.code === 'string'
+    typeof data.email === 'string' &&
+    typeof data.otp === 'string'
   )
 }
 
@@ -93,7 +94,7 @@ export const handlePostRequest = (data: any, url: string, setError: (status: num
       console.log('Success:', data);
     })
     .catch(error => {
-      //console.error('There was a problem with the fetch operation:', error);
+      console.error('There was a problem with the fetch operation:', error);
       //setError(501)
       Toast.show('Problem with fetch operation: ' + error.message, { duration: Toast.durations.LONG });
     });

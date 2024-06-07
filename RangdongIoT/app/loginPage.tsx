@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Image, StyleSheet, TextInput, Text, Dimensions } from 'react-native';
+import { View, TouchableOpacity, Image, StyleSheet, TextInput, Dimensions } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import CustomAlertBoxPassword from "@/components/CustomAlertBoxPassword";
@@ -7,13 +7,11 @@ import CustomAlertBoxCode from "@/components/CustomAlertBoxCode";
 import { useError } from './error/errorContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import Toast from 'react-native-root-toast'; 
-import SMSVerifyCode from 'react-native-sms-verifycode';
 
 import { TemplateRangdong } from './templates/templateRangdong'
 import { DataAuthen, DataOTP, DataCode } from './network/DataToSend';
 import { handlePost } from './network/post'
 
-const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
 
@@ -24,10 +22,10 @@ const LoginPage = ({ navigation }: any) => {
     const [showAlertEmail, setShowAlertEmail] = useState(false);
     const [showAlertCode, setShowAlertCode] = useState(false)
     const { error, setError } = useError(); 
-    const [ email, setEmail ] = useState(''); 
-    const [ code, setCode ] = useState(''); 
-    const [showCodeInput, setShowCodeInput] = useState(false);
+    const [email, setEmail] = useState(''); 
     const [emailSent, setEmailSent] = useState(false);
+    const [codeDigits, setCodeDigits] = useState(['', '', '', '', '', '']);
+    const [codeSent, setCodeSent] = useState(false)
 
     const newData: DataAuthen = {
         username: username,
@@ -39,26 +37,43 @@ const LoginPage = ({ navigation }: any) => {
     }
 
     const newCode: DataCode = {
-        code: code,
+        email: email, 
+        otp: codeDigits.join(''),
     }
-
-    //const smsVerifier = new SmsVerifyCode();
 
 
     useEffect(() => {
         console.log('useEffect triggered with error:', error);
         if (error) {
             let message = '';
-            if (error === 200 && !emailSent) {
+            if (error === 200 && !emailSent && !codeSent) {
                 message = 'Login success';
                 navigation.navigate('homePage');
-            } else if (error === 200 && emailSent) { 
+            } else if (error === 200 && emailSent && !codeSent) { 
                 setShowAlertCode(true);
+                setShowAlertEmail(false);
+                setEmailSent(false); 
                 //setShowCodeInput(true);
-            } else if (error === 400) {
+            } else if (error === 200 && !emailSent && codeSent) { 
+                setShowAlertCode(false);
+                setCodeSent(false); 
+                navigation.navigate('homePage');
+                //setShowCodeInput(true);
+            } else if (error === 400 && !codeSent) {
                 message = 'Invalid input ' + error;
-            } else if (error === 401) {
+            } else if (error === 400 && codeSent) {
+                message = 'Email and Otp are required ' + error;
+                setCodeSent(false); 
+                //setShowAlertCode(false);
+            } else if (error === 401 && !codeSent) {
                 message = 'Invalid credentials ' + error;
+            } else if (error === 401 && codeSent) {
+                message = 'Invalid email format ' + error;
+                setShowAlertCode(false);
+            } else if (error === 404) {
+                message = 'Otp not found or expired ' + error;
+                setShowAlertCode(false);
+                navigation.navigate('loginPage');
             } else if (error === 500) {
                 message = 'Failed to generate or send OTP ' + error;
             } else {
@@ -72,16 +87,15 @@ const LoginPage = ({ navigation }: any) => {
         console.log('email lu : ' + email)
         handlePost(newEmail, 4, setError)
         setShowAlertEmail(false);
-        //setShowCodeInput(true); 
         setEmailSent(true); 
-        
+        setShowAlertCode(true);
     };
-    
 
     const closeAlertCode = () => {
-        console.log('code lu : ' + newCode)
+        console.log('code lu : ' + newCode.otp);
         handlePost(newCode, 5, setError)
         setShowAlertCode(false);
+        setCodeSent(true)
     };
 
     const openAlert = () => {
@@ -95,7 +109,6 @@ const LoginPage = ({ navigation }: any) => {
     const toggleShowPassword = () => { 
         setShowPassword(!showPassword); 
     };
-    
 
     return (
         <View style={styles.container}>
@@ -151,32 +164,20 @@ const LoginPage = ({ navigation }: any) => {
                 value={email}
                 onChangeText={(text: string) => setEmail(text)}
             />
-            <CustomAlertBoxCode
-                visible={showAlertCode}
-                message="Enter the 6-digit code sent to your email (valid for 5 minutes)"
-                onConfirm={closeAlertCode}
-                confirmButtonText='Submit Code'
-                value={code}
-                onChangeText={(text: string) => setCode(text)}
-            />
+            {error === 200 && showAlertCode && (
+                <CustomAlertBoxCode
+                    visible={showAlertCode}
+                    message="Enter the 6-digit code sent to your email (valid for 5 minutes)"
+                    onConfirm={closeAlertCode}
+                    confirmButtonText='Submit Code'
+                    value={codeDigits.join('')} 
+                    onChangeText={(text: string) => setCodeDigits(text.split(''))}
+                />
+            )}
         </View>
     );
 }
-/*{showCodeInput && (
-                <View style={styles.codeInputContainer}>
-                    <ThemedText style={styles.instructionText}>Enter the 6-digit code sent to your email (valid for 5 minutes)</ThemedText>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter code"
-                        placeholderTextColor="#828282"
-                        value={code}
-                        onChangeText={text => setCode(text)}
-                    />
-                    <TouchableOpacity style={styles.button} onPress={handleCodeSubmit}>
-                        <ThemedText style={styles.buttonText}>Submit Code</ThemedText>
-                    </TouchableOpacity>
-                </View>
-            )}*/
+
 export default LoginPage;
 
 const styles = StyleSheet.create({

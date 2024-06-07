@@ -8,7 +8,7 @@ export const handlePutRequest = async (name: string, mac: string, status: boolea
       status: status 
   };
 
-  const apiUrl = 'https://digitaldev.io.vn/todos' + id; 
+  const apiUrl = 'https://digitaldev.io.vn/todos/' + id; 
 
 
   try {

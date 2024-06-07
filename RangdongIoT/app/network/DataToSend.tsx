@@ -20,5 +20,6 @@ export interface DataOTP {
 }
 
 export interface DataCode {
-  code: string;
+  email: string, 
+  otp: string;
 }
