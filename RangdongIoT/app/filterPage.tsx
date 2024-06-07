@@ -102,8 +102,7 @@ const FilterPage = ({ navigation }: any) => {
           <ThemedText style={styles.buttonText}>Filter</ThemedText>
         </TouchableOpacity>
       </ThemedView>
-      <ThemedView style={styles.scrollContainer}>
-        <ScrollView style={styles.scrollView} indicatorStyle="black">
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} indicatorStyle="black">
           {fetchedData.map((item, index) => (
             <View key={index} style={styles.rectangle}>
               <View style={{ alignItems: 'flex-start', right: 10 }}>
@@ -155,7 +154,6 @@ const FilterPage = ({ navigation }: any) => {
             </View>
           ))}
         </ScrollView>
-      </ThemedView>
 
       {showAlertNew && (
         <CustomAlertBoxNew
@@ -201,7 +199,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    paddingTop: 120,
+    paddingTop: 200,
   },
   centeredText: {
     textAlign: 'center',
@@ -228,7 +226,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
-  },   
+  }, 
+  scrollContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   rectangle: {
     width: 320,
     height: 68,
@@ -249,15 +251,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   scrollView: {
-    maxHeight: windowHeight - 350,
-    maxWidth: windowWidth - 50
+    flex: 1,
   },
   scrollContainer: {
     gap: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 60,
     backgroundColor: '#FFF',
+    flex: 1,
   },
   roundContainer: {
     flexDirection: 'column',
@@ -302,12 +303,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
     alignItems: 'center',
-    width: windowWidth,
-    height: 50,
-    top: 292,
-    left: 0,
-    right:0,
-    position: 'absolute',
+    marginBottom: 20,
+    marginTop: 50,
   },
   buttonFilter: {
     width: 60,

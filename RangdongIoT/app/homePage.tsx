@@ -316,7 +316,6 @@ const styles = StyleSheet.create({
     //paddingTop: windowWidth - 200,
     backgroundColor: '#FFF',
     flex: 1,
-
   },
   roundContainer: {
     flexDirection: 'column',

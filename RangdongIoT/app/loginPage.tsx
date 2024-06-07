@@ -20,7 +20,7 @@ const LoginPage = ({ navigation }: any) => {
     const [password, setPassword] = useState(''); 
     const [showPassword, setShowPassword] = useState(false); 
     const [showAlertEmail, setShowAlertEmail] = useState(false);
-    const [showAlertCode, setShowAlertCode] = useState(false)
+    const [showAlertCode, setShowAlertCode] = useState(false);
     const { error, setError } = useError(); 
     const [email, setEmail] = useState(''); 
     const [emailSent, setEmailSent] = useState(false);
@@ -59,9 +59,9 @@ const LoginPage = ({ navigation }: any) => {
                 setCodeSent(false); 
                 navigation.navigate('homePage');
                 //setShowCodeInput(true);
-            } else if (error === 400 && !codeSent) {
+            } else if (error === 400 && emailSent && !codeSent) {
                 message = 'Invalid input ' + error;
-            } else if (error === 400 && codeSent) {
+            } else if (error === 400 && !emailSent && codeSent) {
                 message = 'Email and Otp are required ' + error;
                 setCodeSent(false); 
                 //setShowAlertCode(false);
@@ -81,7 +81,7 @@ const LoginPage = ({ navigation }: any) => {
             }
             Toast.show(message, { duration: Toast.durations.LONG });
         }
-    }, [error, emailSent]);
+    }, [error, emailSent, codeSent]);
     
     const closeAlertEmail = () => {
         console.log('email lu : ' + email)

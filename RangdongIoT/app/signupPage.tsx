@@ -9,6 +9,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TemplateRangdong } from './templates/templateRangdong'
 import { DataSignup } from './network/DataToSend';
 import { handlePost } from './network/post';
+import CustomAlertBoxCode from "@/components/CustomAlertBoxCode";
+import { DataOTP, DataCode } from './network/DataToSend';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -20,30 +22,76 @@ const SignupPage = ({ navigation }: any) => {
     const [showPassword, setShowPassword] = useState(false); 
     const [username, setUsername] = useState(''); 
     const { error, setError } = useError(); 
+    const [emailSent, setEmailSent] = useState(false);
+    const [codeDigits, setCodeDigits] = useState(['', '', '', '', '', '']);
+    const [codeSent, setCodeSent] = useState(false);
+    const [showAlertCode, setShowAlertCode] = useState(false);
 
     const newData: DataSignup = {
         email: email, 
         username: username,
         password: password,
     };
+    
+    const newEmail: DataOTP = {
+        email: email,
+    }
+
+    const newCode: DataCode = {
+        email: email, 
+        otp: codeDigits.join(''),
+    }
+
+    const closeAlertCode = () => {
+        console.log('code lu : ' + newCode.otp);
+        handlePost(newCode, 5, setError)
+        setShowAlertCode(false);
+        setCodeSent(true)
+    };
 
     useEffect(() => {
         console.log('useEffect triggered with error:', error);
         if (error) {
             let message = '';
-            if (error === 201) {
-                message = 'Sign up success';
+            if (error === 200 && emailSent && !codeSent) { 
+                setShowAlertCode(true);
+                setEmailSent(false); 
+                //setShowCodeInput(true);
+            } else if (error === 200 && !emailSent && codeSent) { 
+                setShowAlertCode(false);
+                setCodeSent(false); 
                 navigation.navigate('homePage');
-            } else if (error === 400) {
+            } else if (error === 201) {
+                message = 'Sign up success';
+                handlePost(newEmail, 4, setError)
+                setEmailSent(true)
+            } else if (error === 400 && !emailSent && !codeSent) {
                 message = 'Invalid input ' + error;
-            } else if (error === 500) {
+            } else if (error === 400 && emailSent && !codeSent) {
+                message = 'Invalid input ' + error;
+            } else if (error === 400 && !emailSent && codeSent) {
+                message = 'Email and Otp are required ' + error;
+                setCodeSent(false); 
+                //setShowAlertCode(false);
+            } else if (error === 401 && !codeSent) {
+                message = 'Invalid credentials ' + error;
+            } else if (error === 401 && codeSent) {
+                message = 'Invalid email format ' + error;
+                setShowAlertCode(false);
+            } else if (error === 404) {
+                message = 'Otp not found or expired ' + error;
+                setShowAlertCode(false);
+                navigation.navigate('signupPage');
+            } else if (error === 500 && !codeSent) {
                 message = 'User creation failed ' + error;
-            } else {
+            } else if (error === 500 && codeSent) {
+                message = 'Failed to generate or send OTP ' + error;
+            }  else {
                 message = 'Error: ' + error;
             }
             Toast.show(message, { duration: Toast.durations.LONG });
         }
-    }, [error]);
+    }, [error,  emailSent, codeSent]);
 
     const SignUp = () => {
         handlePost(newData, 3, setError);
@@ -98,7 +146,17 @@ const SignupPage = ({ navigation }: any) => {
                 <TouchableOpacity style={[styles.button, styles.signupButton]} onPress={SignUp}>
                 <ThemedText style={styles.buttonText}>Save</ThemedText>
                 </TouchableOpacity>
-            </View>    
+            </View>
+            {error === 200 && showAlertCode && (
+                <CustomAlertBoxCode
+                    visible={showAlertCode}
+                    message="Enter the 6-digit code sent to your email (valid for 5 minutes)"
+                    onConfirm={closeAlertCode}
+                    confirmButtonText='Submit Code'
+                    value={codeDigits.join('')} 
+                    onChangeText={(text: string) => setCodeDigits(text.split(''))}
+                />
+            )}
         </View>
     )
 }
