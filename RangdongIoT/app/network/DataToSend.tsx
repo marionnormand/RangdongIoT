@@ -9,6 +9,12 @@ export interface DataAuthen {
     password: string;
 }
 
+export interface DateUpdate {
+  mac: string;
+  name: string;
+  status: boolean; 
+}
+
 export interface DataSignup {
     email: string;
     username: string;
@@ -20,6 +26,16 @@ export interface DataOTP {
 }
 
 export interface DataCode {
-  email: string, 
+  email: string;
   otp: string;
+}
+
+export interface DataFilter {
+  field: string; 
+  value: string; 
+}
+
+export interface DataProfile {
+  gender: string; 
+  birthdate: string;
 }

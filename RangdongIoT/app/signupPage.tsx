@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, TouchableOpacity, Image, StyleSheet, TextInput, Dimensions } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useError } from './error/errorContext';
 import Toast from 'react-native-root-toast';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
+import { AuthContext } from './authent/AuthContext';
 
 import { TemplateRangdong } from './templates/templateRangdong'
 import { DataSignup } from './network/DataToSend';
@@ -16,11 +17,12 @@ const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
 const SignupPage = ({ navigation }: any) => {
+    const { username, setUsername } = useContext(AuthContext);
 
     const [email, setEmail] = useState(''); 
     const [password, setPassword] = useState(''); 
     const [showPassword, setShowPassword] = useState(false); 
-    const [username, setUsername] = useState(''); 
+    //const [username, setUsername] = useState(''); 
     const { error, setError } = useError(); 
     const [emailSent, setEmailSent] = useState(false);
     const [codeDigits, setCodeDigits] = useState(['', '', '', '', '', '']);
@@ -56,35 +58,41 @@ const SignupPage = ({ navigation }: any) => {
             if (error === 200 && emailSent && !codeSent) { 
                 setShowAlertCode(true);
                 setEmailSent(false); 
-                //setShowCodeInput(true);
+                message = 'Email sent';
             } else if (error === 200 && !emailSent && codeSent) { 
                 setShowAlertCode(false);
                 setCodeSent(false); 
+                message = 'OTP correct';
                 navigation.navigate('homePage');
             } else if (error === 201) {
-                message = 'Sign up success';
+                message = 'User created successfully';
                 handlePost(newEmail, 4, setError)
                 setEmailSent(true)
             } else if (error === 400 && !emailSent && !codeSent) {
+                message = 'Invalid input or user already exists ' + error;
+            } else if (error === 400 && (emailSent || codeSent)) {
+                if (emailSent) setEmailSent(false); 
+                else if (codeSent) setCodeSent(false); 
                 message = 'Invalid input ' + error;
-            } else if (error === 400 && emailSent && !codeSent) {
-                message = 'Invalid input ' + error;
-            } else if (error === 400 && !emailSent && codeSent) {
-                message = 'Email and Otp are required ' + error;
-                setCodeSent(false); 
-                //setShowAlertCode(false);
             } else if (error === 401 && !codeSent) {
-                message = 'Invalid credentials ' + error;
-            } else if (error === 401 && codeSent) {
-                message = 'Invalid email format ' + error;
+                message = 'Email not found ' + error;
+            } else if (error === 401 && (emailSent || codeSent) ) {
+                message = 'Email not found ' + error;
+                if (emailSent) setEmailSent(false);
+                if (codeSent) setCodeSent(false); 
                 setShowAlertCode(false);
-            } else if (error === 404) {
-                message = 'Otp not found or expired ' + error;
+            } else if (error === 402) {
+                message = 'Wrong or expired OTP ' + error;
+                setCodeSent(false)
                 setShowAlertCode(false);
                 navigation.navigate('signupPage');
-            } else if (error === 500 && !codeSent) {
+            } else if (error === 500 && !emailSent && !codeSent) {
                 message = 'User creation failed ' + error;
-            } else if (error === 500 && codeSent) {
+            } else if (error === 500 && emailSent && !codeSent) {
+                setEmailSent(false); 
+                message = 'Save failed ' + error;
+            } else if (error === 500 && !emailSent && codeSent) {
+                setCodeSent(false); 
                 message = 'Failed to generate or send OTP ' + error;
             }  else {
                 message = 'Error: ' + error;

@@ -10,11 +10,12 @@ interface CustomAlertBoxProps {
   textInput?: string; 
   value: string;
   onChangeText: (text: string) => void;
+  onClose: () => void; 
 }
 
 const windowWidth = Dimensions.get('window').width;
 
-const CustomAlertBoxPassword: React.FC<CustomAlertBoxProps> = ({ visible, message, onConfirm, confirmButtonText, textInput, value, onChangeText }) => {
+const CustomAlertBoxPassword: React.FC<CustomAlertBoxProps> = ({ visible, message, onConfirm, confirmButtonText, textInput, value, onChangeText, onClose }) => {
 
    return (
     <Modal
@@ -22,7 +23,7 @@ const CustomAlertBoxPassword: React.FC<CustomAlertBoxProps> = ({ visible, messag
       transparent={true}
       visible={visible}
     >
-      <TouchableWithoutFeedback onPress={onConfirm}>
+      <TouchableWithoutFeedback onPress={onClose}>
         <BlurView intensity={10} style={styles.overlay}>
           <TouchableWithoutFeedback onPress={() => {}}>
             <View style={styles.container}>

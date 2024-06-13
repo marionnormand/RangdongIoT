@@ -6,6 +6,8 @@ import CustomAlertBoxNew from "@/components/CustomAlertBoxNew";
 import { Switch } from 'react-native-switch';
 import { useRoute } from '@react-navigation/native';
 import { RouteProp } from '@react-navigation/native';
+import { DateUpdate } from './network/DataToSend';
+import { useError } from './error/errorContext';
 
 
 import { handlePutRequest } from './network/put'
@@ -23,6 +25,13 @@ const EditPage = ({ navigation }: any) => {
   const [id, setId] = useState(0);
   const [isSend, setIsSend] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const { error, setError } = useError(); 
+
+  const newData: DateUpdate = {
+    mac: mac,
+    name: name,
+    status: toggleValue,
+  };
 
   useEffect(() => {
     if (rectangle && Object.keys(rectangle).length > 0) {
@@ -41,7 +50,7 @@ const EditPage = ({ navigation }: any) => {
   const handleSave = async () => {
     console.log(`Save pressed`);
     try {
-      await handlePutRequest(name, mac, toggleValue, id);
+      await handlePutRequest(newData, 'https://digitaldev.io.vn/todos/' + id, setError);
       setIsSend(true);
       setShowAlert(true);
     } catch (error) {

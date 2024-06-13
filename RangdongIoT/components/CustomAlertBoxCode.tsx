@@ -36,7 +36,7 @@ const CustomAlertBoxCode: React.FC<CustomAlertBoxCodeProps> = ({ visible, messag
     if (text.length === 1 && index < code.length - 1) {
         refs.current[index + 1]?.focus(); 
     }
-};
+  };
 
   return (
     <Modal

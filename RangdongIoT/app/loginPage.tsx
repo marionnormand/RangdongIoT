@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, TouchableOpacity, Image, StyleSheet, TextInput, Dimensions } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -7,16 +7,17 @@ import CustomAlertBoxCode from "@/components/CustomAlertBoxCode";
 import { useError } from './error/errorContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import Toast from 'react-native-root-toast'; 
+import { AuthContext } from './authent/AuthContext';
 
 import { TemplateRangdong } from './templates/templateRangdong'
 import { DataAuthen, DataOTP, DataCode } from './network/DataToSend';
 import { handlePost } from './network/post'
 
-const windowWidth = Dimensions.get('window').width;
-
+const windowWidth = Dimensions.get('window').width
 
 const LoginPage = ({ navigation }: any) => {
-    const [username, setUsername] = useState(''); 
+    const { username, setUsername } = useContext(AuthContext);
+    //const [username, setUsername] = useState(''); 
     const [password, setPassword] = useState(''); 
     const [showPassword, setShowPassword] = useState(false); 
     const [showAlertEmail, setShowAlertEmail] = useState(false);
@@ -53,28 +54,29 @@ const LoginPage = ({ navigation }: any) => {
                 setShowAlertCode(true);
                 setShowAlertEmail(false);
                 setEmailSent(false); 
-                //setShowCodeInput(true);
+                message = 'Email sent';
             } else if (error === 200 && !emailSent && codeSent) { 
                 setShowAlertCode(false);
                 setCodeSent(false); 
+                message = 'OTP correct'; 
                 navigation.navigate('homePage');
-                //setShowCodeInput(true);
-            } else if (error === 400 && emailSent && !codeSent) {
+            } else if (error === 400) {
                 message = 'Invalid input ' + error;
-            } else if (error === 400 && !emailSent && codeSent) {
-                message = 'Email and Otp are required ' + error;
-                setCodeSent(false); 
-                //setShowAlertCode(false);
-            } else if (error === 401 && !codeSent) {
+            } else if (error === 401 && !emailSent && !codeSent) {
                 message = 'Invalid credentials ' + error;
-            } else if (error === 401 && codeSent) {
+            } else if (error === 401 && (emailSent || codeSent)) {
+                message = 'Email not found ' + error;
+            } else if (error === 401 && !emailSent && codeSent) {
                 message = 'Invalid email format ' + error;
                 setShowAlertCode(false);
-            } else if (error === 404) {
-                message = 'Otp not found or expired ' + error;
+            } else if (error === 402) {
+                message = 'Wrong or expired OTP ' + error;
                 setShowAlertCode(false);
+                setCodeSent(false);
                 navigation.navigate('loginPage');
-            } else if (error === 500) {
+            } else if (error === 500 && emailSent && !codeSent) {
+                message = 'Save failed ' + error;
+            } else if (error === 500 && !emailSent && codeSent) {
                 message = 'Failed to generate or send OTP ' + error;
             } else {
                 message = 'Error: ' + error;
@@ -87,8 +89,8 @@ const LoginPage = ({ navigation }: any) => {
         console.log('email lu : ' + email)
         handlePost(newEmail, 4, setError)
         setShowAlertEmail(false);
-        setEmailSent(true); 
         setShowAlertCode(true);
+        setCodeSent(true);
     };
 
     const closeAlertCode = () => {
@@ -100,6 +102,7 @@ const LoginPage = ({ navigation }: any) => {
 
     const openAlert = () => {
         setShowAlertEmail(true);
+        setEmailSent(true)
     };
 
     const buttonLogin = () => {
@@ -108,6 +111,10 @@ const LoginPage = ({ navigation }: any) => {
 
     const toggleShowPassword = () => { 
         setShowPassword(!showPassword); 
+    };
+
+    const unShowBoxCancel = () => {
+        setShowAlertEmail(false);
     };
 
     return (
@@ -163,6 +170,7 @@ const LoginPage = ({ navigation }: any) => {
                 textInput='email@domain.com'
                 value={email}
                 onChangeText={(text: string) => setEmail(text)}
+                onClose={unShowBoxCancel}
             />
             {error === 200 && showAlertCode && (
                 <CustomAlertBoxCode
@@ -263,7 +271,7 @@ const styles = StyleSheet.create({
         padding: 10, 
         marginLeft: 10,
         marginBottom: -15,
-        marginTop: 30,
+        marginTop: 20,
         color: 'black', 
     },
     inputContainer: {
@@ -294,7 +302,7 @@ const styles = StyleSheet.create({
         width: 30,
         height: 30,
         right: 50,
-        top: 26,
+        top: 22,
     },
     codeInputContainer: {
         marginTop: 20,

@@ -1,29 +1,22 @@
 
 const content_type = 'application/json';
 
-export const handlePutRequest = async (name: string, mac: string, status: boolean, id:number) => {
-  const data_put = {
-      name: name,
-      mac: mac,
-      status: status 
-  };
-
-  const apiUrl = 'https://digitaldev.io.vn/todos/' + id; 
-
-
+export const handlePutRequest = async (data:any, url:string, setError: (status: number) => void) => {
   try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch(url, {
           method: 'PUT',
           headers: {
               'Accept': content_type,
               'Content-Type': content_type
           },
-          body: JSON.stringify(data_put)
+          body: JSON.stringify(data)
       });
 
       if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
       }
+      else console.log('OK')
+      setError(response.status);  
 
       const responseData = await response.json();
       console.log('Response:', responseData);

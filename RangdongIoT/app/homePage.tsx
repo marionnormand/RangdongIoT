@@ -4,11 +4,14 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import CustomAlertBoxNew from "@/components/CustomAlertBoxNew";
 import CustomAlertBoxEdit from "@/components/CustomAlertBoxEdit";
+import CustomAlertBoxFilter from "@/components/CustomAlertBoxFilter";
 import { useFocusEffect } from '@react-navigation/native';
 import { handleDeleteRequest } from './network/delete';
 import { handleGetRequest } from './network/get';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
+import { DataFilter } from './network/DataToSend';
+import { useError } from './error/errorContext';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -16,15 +19,19 @@ const windowWidth = Dimensions.get('window').width;
 const HomePage = ({ navigation }: any) => {
   const [showAlertNew, setShowAlertNew] = useState<boolean>(false);
   const [showAlertEdit, setShowAlertEdit] = useState<boolean>(false);
+  const [showAlertFilter, setShowAlertFilter] = useState<boolean>(false);
   const [selectedRectangle, setSelectedRectangle] = useState<any>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [idData, setId] = useState<number>(0);
   const [fetchedData, setFetchedData] = useState<any[]>([]);
-  const [filter, setFilter] = useState('');
+  const [filterField, setFilterField] = useState('');
+  const [filterValue, setFilterValue] = useState('');
+  const [filterSent, setFilterSent] = useState(false);
   
   const defaultImage = require('@/assets/images/react-logo.png');
   const [image, setImage] = useState(defaultImage);
   const isFocused = useIsFocused();
+  const { error, setError } = useError(); 
 
   const GoEdit = () => {
     navigation.navigate('editPage', { rectangle: selectedRectangle });
@@ -41,13 +48,14 @@ const HomePage = ({ navigation }: any) => {
   };
 
   const unShowBoxCancel = async () => {
-    console.log(`Cancel button pressed`);
+    console.log('Cancel button pressed');
     setShowAlertNew(false);
     setShowAlertEdit(false);
+    setShowAlertFilter(false);
   };
 
   const unShowBoxEdit = async () => {
-    console.log(`Delete pressed`);
+    console.log('Delete pressed');
     handleDeleteRequest(idData);
     setShowAlertEdit(false);
     getUpdate();
@@ -58,9 +66,14 @@ const HomePage = ({ navigation }: any) => {
     setShowAlertNew(true);
   };
 
+  const newPressFilter = () => {
+    console.log('Filter pressed')
+    setShowAlertFilter(true);
+  };
+
   const getUpdate = async () => {
     try {
-      const data = await handleGetRequest(setFetchedData);
+      const data = await handleGetRequest(setFetchedData, 'https://digitaldev.io.vn/todos');
     } catch (error) {
       console.error('Erreur lors de la récupération des données :', error);
     }
@@ -73,42 +86,51 @@ const HomePage = ({ navigation }: any) => {
     }, [])
   );
 
-  
   useEffect(() => {
+    console.log('useEffect triggered with error:', error);
     if (isFocused) {
       loadImage();
-    } 
+    }
     const intervalId = setInterval(() => {
       getUpdate();
-    }, 5000);
-  
-    return () => clearInterval(intervalId); // Nettoyer l'intervalle lors du démontage du composant
-  }, [isFocused]); // Le tableau vide en second argument indique que cet effet ne dépend d'aucune variable, donc il ne s'exécute qu'une seule fois après le montage initial du composant
-  
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [isFocused, error]);
+
   const loadImage = async () => {
     try {
-        const savedImageUri = await AsyncStorage.getItem('profileImage');
-        if (savedImageUri !== null) {
-            setImage({ uri: savedImageUri });
-        }
+      const savedImageUri = await AsyncStorage.getItem('profileImage');
+      if (savedImageUri !== null) {
+        setImage({ uri: savedImageUri });
+      }
     } catch (error) {
-        console.error('Erreur lors du chargement de l\'image :', error);
+      console.error('Erreur lors du chargement de l\'image :', error);
     }
-};
+  };
 
-  const handleOptionPressRond = (index: number, item: any, id:number) => {
-    setSelectedRectangle(item); // Mettre à jour l'état selectedRectangle
-    setId(id); // Mettre à jour l'ID sélectionné
-    setShowAlertEdit(true); // Afficher l'alerte
+  const handleOptionPressRond = (index: number, item: any, id: number) => {
+    setSelectedRectangle(item);
+    setId(id);
+    setShowAlertEdit(true);
   };
 
   const goToFilter = () => {
-    navigation.navigate('filterPage', {filter});
+    //setFilterSent(true);
+    setShowAlertFilter(false)
+    navigation.navigate('filterPage', { dataFilter });
+    //handleGetRequest(setFetchedData, 'https://digitaldev.io.vn/todos/' + dataFilter.field + '/' + dataFilter.value);
   };
 
   const openEdit = () => {
+    setError(500);    //permet de pouvoir aller sur l'autre page 
     navigation.navigate('editProfile');
-  }
+  };
+
+  const dataFilter: DataFilter = {
+    field: filterField,
+    value: filterValue, 
+  };
 
   return (
     <View style={styles.container}>
@@ -119,14 +141,7 @@ const HomePage = ({ navigation }: any) => {
         </TouchableOpacity>
       </View>
       <ThemedView style={styles.row}>
-        <TextInput
-          style={[styles.input, {paddingLeft: 10}]}
-          placeholder="Filter"
-          placeholderTextColor="#828282"
-          value={filter}
-          onChangeText={text => setFilter(text)}
-        />
-        <TouchableOpacity style={styles.buttonFilter} onPress={goToFilter}>
+        <TouchableOpacity style={styles.buttonFilter} onPress={newPressFilter}>
           <ThemedText style={styles.buttonText}>Filter</ThemedText>
         </TouchableOpacity>
         <TouchableOpacity style={styles.buttonNew} onPress={handleNewPress}>
@@ -134,59 +149,57 @@ const HomePage = ({ navigation }: any) => {
         </TouchableOpacity>
       </ThemedView>
 
-     
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} indicatorStyle="black">
-          {fetchedData.map((item, index) => (
-            <View key={index} style={styles.rectangle}>
-              <View style={{ alignItems: 'flex-start', right: 10 }}>
-                <ThemedText style={styles.rectangleText}>
-                  <ThemedText style={styles.rectangleTextBold}>name : </ThemedText>
-                  {item.name}
-                </ThemedText>
-                <ThemedText style={styles.rectangleText}>
-                  <ThemedText style={styles.rectangleTextBold}>mac : </ThemedText>
-                  {item.mac}
-                </ThemedText>
-                <ThemedText style={styles.rectangleText}>
-                  <ThemedText style={styles.rectangleTextBold}>status : </ThemedText>
-                  {item.status.toString()}
-                </ThemedText>
-              </View>
-
-              <TouchableOpacity onPress={() => handleOptionPressRond(index, item, item.id)} style={styles.touchable}>
-                {selectedOption === index && (
-                  <View style={styles.largeCircle}>
-                    <View style={styles.roundContainer}>
-                      {[...Array(3)].map((_, optionIndex) => (
-                        <View
-                          key={optionIndex}
-                          style={[
-                            styles.optionDot,
-                            selectedOption === index && styles.selectedOptionDot
-                          ]}
-                        />
-                      ))}
-                    </View>
-                  </View>
-                )}
-                {selectedOption !== index && (
-                  <View style={styles.largeCircle}>
-                    <View style={styles.roundContainer}>
-                      {[...Array(3)].map((_, optionIndex) => (
-                        <View
-                          key={optionIndex}
-                          style={[
-                            styles.optionDot,
-                          ]}
-                        />
-                      ))}
-                    </View>
-                  </View>
-                )}
-              </TouchableOpacity>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} indicatorStyle="black">
+        {fetchedData.map((item, index) => (
+          <View key={index} style={styles.rectangle}>
+            <View style={{ alignItems: 'flex-start', right: 10 }}>
+              <ThemedText style={styles.rectangleText}>
+                <ThemedText style={styles.rectangleTextBold}>name : </ThemedText>
+                {item.name}
+              </ThemedText>
+              <ThemedText style={styles.rectangleText}>
+                <ThemedText style={styles.rectangleTextBold}>mac : </ThemedText>
+                {item.mac}
+              </ThemedText>
+              <ThemedText style={styles.rectangleText}>
+                <ThemedText style={styles.rectangleTextBold}>status : </ThemedText>
+                {item.status.toString()}
+              </ThemedText>
             </View>
-          ))}
-        </ScrollView>
+
+            <TouchableOpacity onPress={() => handleOptionPressRond(index, item, item.id)} style={styles.touchable}>
+              {selectedOption === index ? (
+                <View style={styles.largeCircle}>
+                  <View style={styles.roundContainer}>
+                    {[...Array(3)].map((_, optionIndex) => (
+                      <View
+                        key={optionIndex}
+                        style={[
+                          styles.optionDot,
+                          selectedOption === index && styles.selectedOptionDot
+                        ]}
+                      />
+                    ))}
+                  </View>
+                </View>
+              ) : (
+                <View style={styles.largeCircle}>
+                  <View style={styles.roundContainer}>
+                    {[...Array(3)].map((_, optionIndex) => (
+                      <View
+                        key={optionIndex}
+                        style={[
+                          styles.optionDot,
+                        ]}
+                      />
+                    ))}
+                  </View>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+        ))}
+      </ScrollView>
 
       {showAlertNew && (
         <CustomAlertBoxNew
@@ -206,11 +219,7 @@ const HomePage = ({ navigation }: any) => {
       {showAlertEdit && selectedRectangle && (
         <CustomAlertBoxEdit
           visible={showAlertEdit}
-          message={
-            <View>
-              <Text>Do you want to update data?</Text>
-            </View>
-          }
+          message='Do you want to update data?'
           onCancel={unShowBoxCancel}
           onDelete={unShowBoxEdit}
           onEdit={GoEdit}
@@ -219,6 +228,20 @@ const HomePage = ({ navigation }: any) => {
           cancelButtonText={'Cancel'}
           showCancelButton={true}
           showExtraButton={true}
+        />
+      )}
+      {showAlertFilter && (
+        <CustomAlertBoxFilter         
+          visible={showAlertFilter}
+          message="Filter"
+          onFilter={goToFilter}
+          filterButtonText="Filter"
+          value={filterField}
+          valueInput={filterValue}
+          textInput="Value"
+          onChangeText={(text: string) => setFilterValue(text)}
+          onChangeDropdown={(value) => setFilterField(value)}
+          onClose={unShowBoxCancel}
         />
       )}
     </View>
@@ -268,12 +291,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },  
   buttonFilter: {
-    width: 60,
-    height: 24,
-    borderRadius: 10,
+    width: 90,
+    height: 30,
+    borderRadius: 6,
     position: 'absolute',
-    right: 150, 
+    right: 225, 
     backgroundColor: '#5DA2A6',
+    justifyContent: 'center',
   },
   buttonText: {
     color: '#FFFFFF',

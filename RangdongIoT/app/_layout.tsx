@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { ErrorProvider } from './error/errorContext';
+import { AuthProvider } from './authent/AuthContext';
 
 import LoginPage from './loginPage';
 import HomePage from './homePage';
@@ -23,7 +24,7 @@ export type RootStackParamList = {
   homePage: undefined; 
   newPage: undefined; 
   signupPage: undefined; 
-  filterPage: {filter: string}; 
+  filterPage: { dataFilter: any };
   editProfile: undefined; 
 };
 
@@ -51,7 +52,8 @@ const RootLayout = () => {
 
   return (
     <ErrorProvider>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
+      <AuthProvider>
+        <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="loginPage" component={LoginPage} />
           <Stack.Screen name="homePage" component={HomePage} />
           <Stack.Screen name="editPage" component={EditPage} />
@@ -60,6 +62,7 @@ const RootLayout = () => {
           <Stack.Screen name="filterPage" component={FilterPage} />
         <Stack.Screen name="editProfile" component={EditProfile} />
       </Stack.Navigator>
+      </AuthProvider>
     </ErrorProvider>
   );
 };

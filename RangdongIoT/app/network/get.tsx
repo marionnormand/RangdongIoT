@@ -1,9 +1,15 @@
 import Toast from 'react-native-root-toast';
 
-const url = 'https://digitaldev.io.vn/todos';
+//const url = 'https://digitaldev.io.vn/todos';
 const content_type = 'application/json';
 
-export const handleGetRequest = async (setFetchedData: React.Dispatch<React.SetStateAction<any[]>>) => {
+
+
+const url2 = 'https://digitaldev.io.vn/todos'; 
+
+
+
+export const handleGetRequest = async (setFetchedData: React.Dispatch<React.SetStateAction<any[]>>, url:string) => {
   try {
     const response = await fetch(url, {
       method: 'GET',
