@@ -6,7 +6,6 @@ import { RootStackParamList } from './_layout';
 import { TemplateRangdong } from './templates/templateRangdong';
 import { Switch } from 'react-native-switch';
 import io from 'socket.io-client';
-import Toggle from "react-native-toggle-element"
 
 const LEDcontroller = ({ navigation }: any) => {
   // GET ID from Home page
@@ -78,7 +77,8 @@ const LEDcontroller = ({ navigation }: any) => {
 
   const toggleSwitch = (val:boolean) => {
     const status = toggleValue ? 0 : 1;
-    const data = createData(datatosend2, status);
+    const id = parseInt(datatosend2, 10);
+    const data = createData(id, status);
     setToggleValue(val)
     console.log(data)
     fetch('https://digitaldev.io.vn/mqtt/publish', {
@@ -123,7 +123,7 @@ const LEDcontroller = ({ navigation }: any) => {
             activeText={'ON'}
             inActiveText={'OFF'}
             circleSize={50}
-            barHeight={50} // Hauteur de la barre (ovale horizontal)
+            barHeight={50} 
             circleBorderWidth={0}
             backgroundActive={'#D9D9D9'}
             backgroundInactive={'#D9D9D9'}
@@ -132,10 +132,10 @@ const LEDcontroller = ({ navigation }: any) => {
             renderInsideCircle={() => <Text style={styles.activeText}>{toggleValue ? 'ON' : 'OFF'}</Text>}
             renderActiveText={false}
             renderInActiveText={false}
-            switchLeftPx={1.6} // Déplace le cercle de moitié de sa taille vers la gauche
-            switchRightPx={1.6} // Déplace le cercle de moitié de sa taille vers la droite
-            switchWidthMultiplier={2} // Double la largeur de la barre
-            switchBorderRadius={25} // Rayon de l'ovale
+            switchLeftPx={1.6} 
+            switchRightPx={1.6} 
+            switchWidthMultiplier={2} 
+            switchBorderRadius={25} 
           />
       </View>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -158,7 +158,6 @@ const styles = StyleSheet.create({
   },
   statusSwitch: {
     alignItems: 'center',
-    //paddingTop: 30,
   },
   textContainer: {
     alignItems: 'center',
@@ -185,8 +184,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   textTitle: {
-    fontSize: 15, // Adjust the size as needed
-    color: '#933430', // Change the color as needed
+    fontSize: 15, 
+    color: '#933430', 
     fontWeight: 'bold',
     paddingTop: 30,
   },
@@ -200,7 +199,7 @@ const styles = StyleSheet.create({
   activeText: {
     color: '#FFFFFF',
     fontSize: 16,
-    position: 'absolute', // Pour positionner le texte 'ON'
+    position: 'absolute', 
   },
 });
 
