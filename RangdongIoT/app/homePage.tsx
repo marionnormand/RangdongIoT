@@ -132,6 +132,10 @@ const HomePage = ({ navigation }: any) => {
     value: filterValue, 
   };
 
+  const goToLedController = (datatosend:any, datatosend2:any, datatosend3:any) => {
+    navigation.navigate('ledControl', {datatosend, datatosend2, datatosend3});
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.editProfileContainer}>
@@ -166,6 +170,10 @@ const HomePage = ({ navigation }: any) => {
                 {item.status.toString()}
               </ThemedText>
             </View>
+
+            <TouchableOpacity style={styles.buttonLED} onPress={() => goToLedController(item.name, item.mac, item.status)}>
+                <ThemedText>LED</ThemedText>
+            </TouchableOpacity>
 
             <TouchableOpacity onPress={() => handleOptionPressRond(index, item, item.id)} style={styles.touchable}>
               {selectedOption === index ? (
@@ -392,4 +400,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10, 
   },
+  buttonLED: {
+    position: 'absolute',
+    width: '20%',
+    height: 45,
+    backgroundColor: '#933434',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderRadius: 15,
+    left: 190,
+    borderWidth: 2,
+    borderColor: '#BE9F9F70',
+  }
 });

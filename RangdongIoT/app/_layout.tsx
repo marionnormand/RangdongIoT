@@ -13,6 +13,7 @@ import NewPage from './newPage';
 import SignupPage from './signupPage';
 import FilterPage from './filterPage';
 import EditProfile from './editProfile';
+import LEDcontroller from './ledControl';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -25,7 +26,8 @@ export type RootStackParamList = {
   newPage: undefined; 
   signupPage: undefined; 
   filterPage: { dataFilter: any };
-  editProfile: undefined; 
+  editProfile: undefined;   
+  ledControl: {datatosend : any, datatosend2 : any, datatosend3 : any};
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -60,7 +62,8 @@ const RootLayout = () => {
           <Stack.Screen name="newPage" component={NewPage} />
           <Stack.Screen name="signupPage" component={SignupPage} />
           <Stack.Screen name="filterPage" component={FilterPage} />
-        <Stack.Screen name="editProfile" component={EditProfile} />
+          <Stack.Screen name="editProfile" component={EditProfile} />
+          <Stack.Screen name="ledControl" component={LEDcontroller} />
       </Stack.Navigator>
       </AuthProvider>
     </ErrorProvider>

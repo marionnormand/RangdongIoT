@@ -47,7 +47,9 @@
     "react-native-switch": "^1.5.1",
     "react-native-tcp-socket": "^6.0.6",
     "react-native-toggle-element": "^2.0.1",
-    "react-native-web": "~0.19.10"
+    "react-native-web": "~0.19.10",
+    "socket.io-client": "^4.7.5",
+    "yeast": "^0.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
